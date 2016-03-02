@@ -39,7 +39,9 @@
         <snapshots.repository.url/>
         <reports.repository.url/>
         <releases.repository.url/>
+        <cxf.version>3.1.4</cxf.version>
         <karaf.version>4.0.4</karaf.version>
+        <commons-lang.version>2.6</commons-lang.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

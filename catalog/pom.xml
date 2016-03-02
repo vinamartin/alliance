@@ -26,7 +26,9 @@
     <packaging>pom</packaging>
     <name>DDF :: Alliance :: Catalog</name>
 
-    <modules/>
+    <modules>
+        <module>nsili</module>
+    </modules>
 
     <build>
         <plugins>
