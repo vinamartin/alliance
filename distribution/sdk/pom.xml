@@ -24,7 +24,7 @@
     <groupId>org.codice.alliance.distribution</groupId>
     <artifactId>sdk</artifactId>
     <packaging>pom</packaging>
-    <name>DDF :: Alliance :: Distribution :: SDK</name>
+    <name>Alliance :: Distribution :: SDK</name>
     <properties>
 
     </properties>

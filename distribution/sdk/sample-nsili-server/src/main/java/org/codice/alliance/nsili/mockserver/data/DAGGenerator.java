@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.codice.alliance.nsili.common.NsiliCommonUtils;
+import org.codice.alliance.nsili.common.NsiliConstants;
+import org.codice.alliance.nsili.common.NsiliImageryDecompressionTech;
+import org.codice.alliance.nsili.common.NsiliImageryType;
+import org.codice.alliance.nsili.common.NsiliVideoEncodingScheme;
 import org.codice.alliance.nsili.common.UCO.AbsTime;
 import org.codice.alliance.nsili.common.UCO.AbsTimeHelper;
 import org.codice.alliance.nsili.common.UCO.Coordinate2d;
@@ -36,11 +40,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
-
-import org.codice.alliance.nsili.common.NsiliConstants;
-import org.codice.alliance.nsili.common.NsiliImageryDecompressionTech;
-import org.codice.alliance.nsili.common.NsiliImageryType;
-import org.codice.alliance.nsili.common.NsiliVideoEncodingScheme;
 
 public class DAGGenerator {
 
@@ -64,11 +63,16 @@ public class DAGGenerator {
 
     public static final String SOURCE_LIST = "AAF,MXF";
 
+    public static final String PUBLISHER = "Mock Server";
+
+    public static final String SOURCE_LIBRARY = "Mock Library";
+
     private static final int RESULT_DAGS_TO_GENERATE = partMap.size();
 
-    private static final Rectangle RECTANGLE = new Rectangle(new Coordinate2d(-6.753, 11.9764), new Coordinate2d(9.3383, 21.2157));
+    //private static final Rectangle RECTANGLE = new Rectangle(new Coordinate2d(-6.753, 11.9764),
+    //        new Coordinate2d(9.3383, 21.2157));
 
-    private static final AbsTime TIME = new AbsTime(new Date((short) 2, (short) 10, (short) 16),
+    private static final AbsTime TIME = new AbsTime(new Date((short) 2012, (short) 10, (short) 16),
             new Time((short) 10, (short) 0, (short) 0));
 
     public static int getResultHits() {
@@ -77,28 +81,46 @@ public class DAGGenerator {
 
     public static DAG[] generateDAGResultNSILAllView(ORB orb) {
 
-        DAG[] metacards = new DAG[RESULT_DAGS_TO_GENERATE];
-        int i = 0;
-        for(Map.Entry<String, String> entry : partMap.entrySet()) {
-            DAG metacard = generateNSILDAG(orb, entry.getKey(), entry.getValue());
+        DAG[] metacards = new DAG[RESULT_DAGS_TO_GENERATE + 2];
+
+        for (int i = 0; i < RESULT_DAGS_TO_GENERATE; i++) {
+            DAG metacard = generateNSILDAG(orb, NsiliConstants.NSIL_IMAGERY, partMap.get(
+                    NsiliConstants.NSIL_IMAGERY), "CSD Sample Data " + i);
             metacards[i] = metacard;
-            i++;
         }
+
+        metacards[RESULT_DAGS_TO_GENERATE] = generateNSILDAG(orb,
+                NsiliConstants.NSIL_GMTI,
+                partMap.get(NsiliConstants.NSIL_GMTI),
+                "CSD Sample GMTI Data ");
+
+        metacards[RESULT_DAGS_TO_GENERATE + 1] = generateNSILDAG(orb,
+                NsiliConstants.NSIL_VIDEO,
+                partMap.get(NsiliConstants.NSIL_VIDEO),
+                "CSD Sample Video Data ");
+
         return metacards;
     }
 
-    private static DAG generateNSILDAG(ORB orb, String partType, String commonType) {
+    private static DAG generateNSILDAG(ORB orb, String partType, String commonType, String title) {
         DAG metacard = new DAG();
         Graph<Node, Edge> graph = new DirectedAcyclicGraph<>(Edge.class);
         Node[] nodeRefs = constructNSILProduct(orb, graph, 1, commonType);
-        constructNSILPart(nodeRefs[0], nodeRefs[1], nodeRefs[3], orb, graph, partType);
-        constructNSILPart(nodeRefs[0], nodeRefs[1], nodeRefs[3], orb, graph, NsiliConstants.NSIL_COVERAGE);
+        constructNSILPart(nodeRefs[0], nodeRefs[1], nodeRefs[3], orb, graph, partType, title);
         constructNSILPart(nodeRefs[0],
                 nodeRefs[1],
                 nodeRefs[3],
                 orb,
                 graph,
-                NsiliConstants.NSIL_EXPLOITATION_INFO);
+                NsiliConstants.NSIL_COVERAGE,
+                title);
+        constructNSILPart(nodeRefs[0],
+                nodeRefs[1],
+                nodeRefs[3],
+                orb,
+                graph,
+                NsiliConstants.NSIL_EXPLOITATION_INFO,
+                title);
         constructNSILAssociation(nodeRefs[0], nodeRefs[2], orb, graph, 1);
         NsiliCommonUtils.setUCOEdgeIds(graph);
         NsiliCommonUtils.setUCOEdges(nodeRefs[0], graph);
@@ -119,8 +141,8 @@ public class DAGGenerator {
      * @return a Node[] that contains a reference to the root, NSIL_SECURITY, and NSIL_CARD that are used
      * in other subgraphs.
      */
-    private static Node[] constructNSILProduct(ORB orb, Graph<Node, Edge> graph,
-            int numRelatedFile, String commonType) {
+    private static Node[] constructNSILProduct(ORB orb, Graph<Node, Edge> graph, int numRelatedFile,
+            String commonType) {
         List<String> product_nodes = Arrays.asList(NsiliConstants.NSIL_APPROVAL,
                 NsiliConstants.NSIL_FILE,
                 NsiliConstants.NSIL_STREAM,
@@ -154,13 +176,17 @@ public class DAGGenerator {
                 attribute = constructAttributeNode(NsiliConstants.DATE_TIME_DECLARED, TIME, orb);
                 graph.addVertex(attribute);
                 graph.addEdge(node, attribute);
-                attribute = constructAttributeNode(NsiliConstants.PRODUCT_URL, PRODUCT_JPG_URL, orb);
+                attribute = constructAttributeNode(NsiliConstants.PRODUCT_URL,
+                        PRODUCT_JPG_URL,
+                        orb);
                 graph.addVertex(attribute);
                 graph.addEdge(node, attribute);
                 break;
 
             case NsiliConstants.NSIL_METADATA_SECURITY:
-                attribute = constructAttributeNode(NsiliConstants.CLASSIFICATION, UNCLASSIFIED, orb);
+                attribute = constructAttributeNode(NsiliConstants.CLASSIFICATION,
+                        UNCLASSIFIED,
+                        orb);
                 graph.addVertex(attribute);
                 graph.addEdge(node, attribute);
                 attribute = constructAttributeNode(NsiliConstants.POLICY, NATO_EU, orb);
@@ -172,7 +198,9 @@ public class DAGGenerator {
                 break;
 
             case NsiliConstants.NSIL_SECURITY:
-                attribute = constructAttributeNode(NsiliConstants.CLASSIFICATION, UNCLASSIFIED, orb);
+                attribute = constructAttributeNode(NsiliConstants.CLASSIFICATION,
+                        UNCLASSIFIED,
+                        orb);
                 graph.addVertex(attribute);
                 graph.addEdge(node, attribute);
                 attribute = constructAttributeNode(NsiliConstants.POLICY, NATO_EU, orb);
@@ -190,6 +218,10 @@ public class DAGGenerator {
                 attribute = constructAttributeNode(NsiliConstants.DATE_TIME_DECLARED, TIME, orb);
                 graph.addVertex(attribute);
                 graph.addEdge(node, attribute);
+                break;
+
+            case NsiliConstants.NSIL_CARD:
+                addCardAttributes(node, graph, orb);
                 break;
             }
 
@@ -210,13 +242,18 @@ public class DAGGenerator {
 
         Node node = constructEntityNode(NsiliConstants.NSIL_COMMON, orb);
         graph.addVertex(node);
-        attribute = constructAttributeNode(NsiliConstants.IDENTIFIER_UUID, UUID.randomUUID().toString(), orb);
+        attribute = constructAttributeNode(NsiliConstants.IDENTIFIER_UUID,
+                UUID.randomUUID()
+                        .toString(),
+                orb);
         graph.addVertex(attribute);
         graph.addEdge(node, attribute);
         attribute = constructAttributeNode(NsiliConstants.TYPE, commonType, orb);
         graph.addVertex(attribute);
         graph.addEdge(node, attribute);
-        attribute = constructAttributeNode(NsiliConstants.IDENTIFIER_MISSION, IDENTIFIER_VALUE, orb);
+        attribute = constructAttributeNode(NsiliConstants.IDENTIFIER_MISSION,
+                IDENTIFIER_VALUE,
+                orb);
         graph.addVertex(attribute);
         graph.addEdge(node, attribute);
         attribute = constructAttributeNode(NsiliConstants.SOURCE, SOURCE_LIST, orb);
@@ -228,8 +265,26 @@ public class DAGGenerator {
 
         nodeArray[3] = node;
 
-
         return nodeArray;
+    }
+
+    private static void addCardAttributes(Node node, Graph<Node, Edge> graph, ORB orb) {
+        Node attribute;
+        attribute = constructAttributeNode(NsiliConstants.IDENTIFIER_UUID, UUID.randomUUID().toString(), orb);
+        graph.addVertex(attribute);
+        graph.addEdge(node, attribute);
+        attribute = constructAttributeNode(NsiliConstants.DATE_TIME_MODIFIED, TIME, orb);
+        graph.addVertex(attribute);
+        graph.addEdge(node, attribute);
+        attribute = constructAttributeNode(NsiliConstants.SOURCE_DATE_TIME_MODIFIED, TIME, orb);
+        graph.addVertex(attribute);
+        graph.addEdge(node, attribute);
+        attribute = constructAttributeNode(NsiliConstants.PUBLISHER, PUBLISHER, orb);
+        graph.addVertex(attribute);
+        graph.addEdge(node, attribute);
+        attribute = constructAttributeNode(NsiliConstants.SOURCE_LIBRARY, SOURCE_LIBRARY, orb);
+        graph.addVertex(attribute);
+        graph.addEdge(node, attribute);
     }
 
     /**
@@ -241,8 +296,8 @@ public class DAGGenerator {
      * @param orb          - a reference to the orb to create UCO objects
      * @param graph        - the graph representation of the DAG
      */
-    private static void constructNSILPart(Node nsilProduct, Node nsilSecurity, Node nsilCommon, ORB orb,
-            Graph<Node, Edge> graph, String partType) {
+    private static void constructNSILPart(Node nsilProduct, Node nsilSecurity, Node nsilCommon,
+            ORB orb, Graph<Node, Edge> graph, String partType, String title) {
 
         Node root = constructEntityNode(NsiliConstants.NSIL_PART, orb);
         graph.addVertex(root);
@@ -266,7 +321,9 @@ public class DAGGenerator {
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
 
-            attribute = constructAttributeNode(NsiliConstants.SPATIAL_GEOGRAPHIC_REF_BOX, RECTANGLE, orb);
+            attribute = constructAttributeNode(NsiliConstants.SPATIAL_GEOGRAPHIC_REF_BOX,
+                    getRandomRectangle(),
+                    orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
 
@@ -285,10 +342,12 @@ public class DAGGenerator {
             break;
 
         case NsiliConstants.NSIL_EXPLOITATION_INFO:
-            attribute = constructAttributeNode(NsiliConstants.LEVEL, new Short((short)2), orb);
+            attribute = constructAttributeNode(NsiliConstants.LEVEL, new Short((short) 2), orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
-            attribute = constructAttributeNode(NsiliConstants.AUTO_GENERATED, new Boolean(false), orb);
+            attribute = constructAttributeNode(NsiliConstants.AUTO_GENERATED,
+                    new Boolean(false),
+                    orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             attribute = constructAttributeNode(NsiliConstants.SUBJ_QUALITY_CODE, "POOR", orb);
@@ -306,11 +365,14 @@ public class DAGGenerator {
             break;
 
         case NsiliConstants.NSIL_IMAGERY:
-            attribute = constructAttributeNode(NsiliConstants.CATEGORY, NsiliImageryType.VIS.toString(), orb);
+            attribute = constructAttributeNode(NsiliConstants.CATEGORY,
+                    NsiliImageryType.VIS.toString(),
+                    orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             attribute = constructAttributeNode(NsiliConstants.DECOMPRESSION_TECHNIQUE,
-                    NsiliImageryDecompressionTech.NC.toString(), orb);
+                    NsiliImageryDecompressionTech.NC.toString(),
+                    orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             attribute = constructAttributeNode(NsiliConstants.IDENTIFIER, ORGANIZATION + "1", orb);
@@ -319,7 +381,7 @@ public class DAGGenerator {
             attribute = constructAttributeNode(NsiliConstants.NUMBER_OF_BANDS, 1, orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
-            attribute = constructAttributeNode(NsiliConstants.TITLE, "Test Imagery Title", orb);
+            attribute = constructAttributeNode(NsiliConstants.TITLE, title, orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             break;
@@ -328,7 +390,9 @@ public class DAGGenerator {
             attribute = constructAttributeNode(NsiliConstants.RECIPIENT, ORGANIZATION + "2", orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
-            attribute = constructAttributeNode(NsiliConstants.MESSAGE_BODY, "This is a message", orb);
+            attribute = constructAttributeNode(NsiliConstants.MESSAGE_BODY,
+                    "This is a message",
+                    orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             attribute = constructAttributeNode(NsiliConstants.MESSAGE_TYPE, XMPP, orb);
@@ -337,7 +401,9 @@ public class DAGGenerator {
             break;
 
         case NsiliConstants.NSIL_REPORT:
-            attribute = constructAttributeNode(NsiliConstants.ORIGINATORS_REQ_SERIAL_NUM, "1234", orb);
+            attribute = constructAttributeNode(NsiliConstants.ORIGINATORS_REQ_SERIAL_NUM,
+                    "1234",
+                    orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             attribute = constructAttributeNode(NsiliConstants.PRIORITY, "IMMEDIATE", orb);
@@ -352,7 +418,9 @@ public class DAGGenerator {
             attribute = constructAttributeNode(NsiliConstants.FOR_ACTION, "Haiti", orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
-            attribute = constructAttributeNode(NsiliConstants.FOR_INFORMATION, "USA,Canada,Planet Mars", orb);
+            attribute = constructAttributeNode(NsiliConstants.FOR_INFORMATION,
+                    "USA,Canada,Planet Mars",
+                    orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             attribute = constructAttributeNode(NsiliConstants.SERIAL_NUMBER, "12345", orb);
@@ -376,13 +444,13 @@ public class DAGGenerator {
             break;
 
         case NsiliConstants.NSIL_TDL:
-            attribute = constructAttributeNode(NsiliConstants.ACTIVITY, new Short((short)1), orb);
+            attribute = constructAttributeNode(NsiliConstants.ACTIVITY, new Short((short) 1), orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             attribute = constructAttributeNode(NsiliConstants.MESSAGE_NUM, "J2.2", orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
-            attribute = constructAttributeNode(NsiliConstants.PLATFORM, new Short((short)2), orb);
+            attribute = constructAttributeNode(NsiliConstants.PLATFORM, new Short((short) 2), orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             attribute = constructAttributeNode(NsiliConstants.TRACK_NUM, "EK627", orb);
@@ -391,11 +459,14 @@ public class DAGGenerator {
             break;
 
         case NsiliConstants.NSIL_VIDEO:
-            attribute = constructAttributeNode(NsiliConstants.CATEGORY, NsiliImageryType.IR.toString(), orb);
+            attribute = constructAttributeNode(NsiliConstants.CATEGORY,
+                    NsiliImageryType.IR.toString(),
+                    orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             attribute = constructAttributeNode(NsiliConstants.ENCODING_SCHEME,
-                    NsiliVideoEncodingScheme.V264ON2.getSpecName(), orb);
+                    NsiliVideoEncodingScheme.V264ON2.getSpecName(),
+                    orb);
             graph.addVertex(attribute);
             graph.addEdge(node, attribute);
             break;
@@ -416,13 +487,13 @@ public class DAGGenerator {
     private static void constructNSILAssociation(Node nsilProduct, Node nsilCard, ORB orb,
             Graph<Node, Edge> graph, int numDestinations) {
 
-        List<String> association_nodes = Arrays.asList(NsiliConstants.NSIL_RELATION, NsiliConstants.NSIL_SOURCE);
+        List<String> association_nodes = Arrays.asList(NsiliConstants.NSIL_RELATION,
+                NsiliConstants.NSIL_SOURCE);
         List<Node> nodePartNodes = getEntityListFromStringList(association_nodes, orb);
 
         Node root = constructEntityNode(NsiliConstants.NSIL_ASSOCIATION, orb);
         graph.addVertex(root);
         graph.addEdge(nsilProduct, root);
-        graph.addEdge(root, nsilCard);
 
         for (Node n : nodePartNodes) {
             graph.addVertex(n);
@@ -430,13 +501,15 @@ public class DAGGenerator {
 
         graph.addEdge(root, nodePartNodes.get(1));
 
-        graph.addEdge(nodePartNodes.get(1), nsilCard);
-
         for (int i = 0; i < numDestinations; i++) {
             Node nsilDestination = constructEntityNode(NsiliConstants.NSIL_DESTINATION, orb);
             graph.addVertex(nsilDestination);
             graph.addEdge(root, nsilDestination);
-            graph.addEdge(nsilDestination, nsilCard);
+
+            Node card = constructEntityNode(NsiliConstants.NSIL_CARD, orb);
+            graph.addVertex(card);
+            graph.addEdge(nsilDestination, card);
+            addCardAttributes(card, graph, orb);
         }
     }
 
@@ -464,19 +537,33 @@ public class DAGGenerator {
             ORB orb) {
         Any any = orb.create_any();
 
-        if (attributeValues.getClass().getCanonicalName().equals(String.class.getCanonicalName())) {
+        if (attributeValues.getClass()
+                .getCanonicalName()
+                .equals(String.class.getCanonicalName())) {
             any.insert_string((String) attributeValues);
-        } else if (attributeValues.getClass().getCanonicalName().equals(Integer.class.getCanonicalName())) {
+        } else if (attributeValues.getClass()
+                .getCanonicalName()
+                .equals(Integer.class.getCanonicalName())) {
             any.insert_ulong((int) attributeValues);
-        } else if (attributeValues.getClass().getCanonicalName().equals(Double.class.getCanonicalName())) {
+        } else if (attributeValues.getClass()
+                .getCanonicalName()
+                .equals(Double.class.getCanonicalName())) {
             any.insert_double((double) attributeValues);
-        } else if (attributeValues.getClass().getCanonicalName().equals(AbsTime.class.getCanonicalName())) {
+        } else if (attributeValues.getClass()
+                .getCanonicalName()
+                .equals(AbsTime.class.getCanonicalName())) {
             AbsTimeHelper.insert(any, (AbsTime) attributeValues);
-        } else if (attributeValues.getClass().getCanonicalName().equals(Rectangle.class.getCanonicalName())) {
+        } else if (attributeValues.getClass()
+                .getCanonicalName()
+                .equals(Rectangle.class.getCanonicalName())) {
             RectangleHelper.insert(any, (Rectangle) attributeValues);
-        } else if (attributeValues.getClass().getCanonicalName().equals(Boolean.class.getCanonicalName())) {
+        } else if (attributeValues.getClass()
+                .getCanonicalName()
+                .equals(Boolean.class.getCanonicalName())) {
             any.insert_boolean((Boolean) attributeValues);
-        } else if (attributeValues.getClass().getCanonicalName().equals(Short.class.getCanonicalName())) {
+        } else if (attributeValues.getClass()
+                .getCanonicalName()
+                .equals(Short.class.getCanonicalName())) {
             any.insert_short((Short) attributeValues);
         }
         return new Node(0, NodeType.ATTRIBUTE_NODE, attributeName, any);
@@ -490,10 +577,24 @@ public class DAGGenerator {
         map.put(NsiliConstants.NSIL_MESSAGE, "MESSAGE");
         map.put(NsiliConstants.NSIL_REPORT, "REPORT");
         map.put(NsiliConstants.NSIL_RFI, "RFI");
-        map.put(NsiliConstants.NSIL_SDS, "SYSTEM DEPLOYMENT STATUS");
         map.put(NsiliConstants.NSIL_TASK, "TASK");
         map.put(NsiliConstants.NSIL_TDL, "TDL DATA");
         map.put(NsiliConstants.NSIL_VIDEO, "VIDEO");
         return map;
+    }
+
+    private static Rectangle getRandomRectangle() {
+
+        int x = getRandomNumber(-75, 75);
+        int y = getRandomNumber(-175, 175);
+
+        Rectangle rectangle = new Rectangle(new Coordinate2d(x, y),
+                new Coordinate2d(x+5, y+5));
+
+        return rectangle;
+    }
+
+    private static int getRandomNumber(int a, int b) {
+        return a + (int) ((1 + b - a) * Math.random());
     }
 }
