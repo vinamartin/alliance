@@ -17,19 +17,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.codice</groupId>
-        <artifactId>alliance</artifactId>
+        <groupId>org.codice.alliance</groupId>
+        <artifactId>distribution</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <groupId>org.codice.alliance</groupId>
-    <artifactId>distribution</artifactId>
+    <groupId>org.codice.alliance.distribution</groupId>
+    <artifactId>sdk</artifactId>
     <packaging>pom</packaging>
-    <name>DDF :: Alliance :: Distribution</name>
+    <name>DDF :: Alliance :: Distribution :: SDK</name>
+    <properties>
+
+    </properties>
 
     <modules>
-        <module>sdk</module>
+        <module>sample-nsili-server</module>
     </modules>
-
     <build>
         <plugins>
             <plugin>
