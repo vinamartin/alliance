@@ -122,7 +122,6 @@
                             platform-util,
                             commons-beanutils,
                             cdi-api,
-                            commons-beanutils,
                             codice-imaging-nitf-core,
                             codice-imaging-cgm,
                             codice-imaging-nitf-render,

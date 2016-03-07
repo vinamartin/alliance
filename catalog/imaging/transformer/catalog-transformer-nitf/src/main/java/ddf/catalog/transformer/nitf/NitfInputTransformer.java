@@ -89,6 +89,57 @@ public class NitfInputTransformer implements InputTransformer {
 
     private MetacardFactory metacardFactory;
 
+    private static void outputThisTre(StringBuilder treXml, Tre tre) {
+        treXml.append("    <tre name=\"");
+        treXml.append(tre.getName()
+                .trim());
+        treXml.append("\">\n");
+        for (TreEntry entry : tre.getEntries()) {
+            outputThisEntry(treXml, entry, 2);
+        }
+        treXml.append("    </tre>\n");
+    }
+
+    private static void doIndent(StringBuilder treXml, int indentLevel) {
+        for (int i = 0; i < indentLevel; ++i) {
+            treXml.append("  ");
+        }
+    }
+
+    private static void outputThisEntry(StringBuilder treXml, TreEntry entry, int indentLevel) {
+        if (entry.getFieldValue() != null) {
+            doIndent(treXml, indentLevel);
+            treXml.append("<field name=\"");
+            treXml.append(entry.getName());
+            treXml.append("\" value=\"");
+            treXml.append(entry.getFieldValue());
+            treXml.append("\" />\n");
+        }
+        if ((entry.getGroups() != null) && (!entry.getGroups()
+                .isEmpty())) {
+            doIndent(treXml, indentLevel);
+            treXml.append("<repeated name=\"");
+            treXml.append(entry.getName());
+            treXml.append("\" number=\"");
+            treXml.append(entry.getGroups()
+                    .size());
+            treXml.append("\">\n");
+            int i = 0;
+            for (TreGroup group : entry.getGroups()) {
+                doIndent(treXml, indentLevel + 1);
+                treXml.append(String.format("<group index=\"%d\">%n", i));
+                for (TreEntry groupEntry : group.getEntries()) {
+                    outputThisEntry(treXml, groupEntry, indentLevel + 2);
+                }
+                doIndent(treXml, indentLevel + 1);
+                treXml.append(String.format("</group>%n"));
+                i++;
+            }
+            doIndent(treXml, indentLevel);
+            treXml.append("</repeated>\n");
+        }
+    }
+
     /**
      * Transforms NITF images into a {@link Metacard}
      */
@@ -131,11 +182,10 @@ public class NitfInputTransformer implements InputTransformer {
 
             setHeaderAttributes(metacard, parsingStrategy.getNitfHeader());
 
-            handleSegment(parsingStrategy.getImageSegmentHeaders(),
-                    (imageHeader) -> {
-                        handleImageSegmentHeader(metacard, imageHeader, polygonList);
-                        setMetadataFromImageSegments(metadataXml, imageHeader);
-                    });
+            handleSegment(parsingStrategy.getImageSegmentHeaders(), (imageHeader) -> {
+                handleImageSegmentHeader(metacard, imageHeader, polygonList);
+                setMetadataFromImageSegments(metadataXml, imageHeader);
+            });
 
             handleSegment(parsingStrategy.getGraphicSegmentHeaders(),
                     (graphic) -> setMetadataForGraphicSegment(metadataXml, graphic));
@@ -163,7 +213,6 @@ public class NitfInputTransformer implements InputTransformer {
                 metacard.setAttribute(Metacard.GEOGRAPHY, multiPolygon.toText());
             }
 
-
             //TODO: Generate thumbnails - this doesn't work in a headless environment
 /*
             ImageInputStream imageData = new MemoryCacheImageInputStream(new ByteArrayInputStream(parsingStrategy.getImageSegmentData().get(0)));
@@ -180,17 +229,18 @@ public class NitfInputTransformer implements InputTransformer {
             }
 */
 
-
         } catch (ParseException e) {
             throw new CatalogTransformerException(e);
         }
     }
 
-    private <T extends CommonNitfSegment> void handleSegment(List<T> segmentList, Consumer<T> segmentConsumer) {
+    private <T extends CommonNitfSegment> void handleSegment(List<T> segmentList,
+            Consumer<T> segmentConsumer) {
         for (T segment : segmentList) {
             segmentConsumer.accept(segment);
         }
     }
+
     private void setHeaderAttributes(DynamicMetacard metacard, NitfFileHeader header) {
         Date date = getDate(header.getFileDateTime()
                 .getSourceString());
@@ -208,49 +258,31 @@ public class NitfInputTransformer implements InputTransformer {
         metacard.addAttribute(Nitf.ORIGINATOR_NAME, header.getOriginatorsName());
         metacard.addAttribute(Nitf.ORIGINATING_STATION_ID, header.getOriginatingStationId());
 
-        metacard.addAttribute(Nitf.CODE_WORDS,
-                header.getFileSecurityMetadata()
-                        .getCodewords());
-        metacard.addAttribute(Nitf.CONTROL_CODE,
-                header.getFileSecurityMetadata()
-                        .getControlAndHandling());
-        metacard.addAttribute(Nitf.RELEASE_INSTRUCTION,
-                header.getFileSecurityMetadata()
-                        .getReleaseInstructions());
-        metacard.addAttribute(Nitf.CONTROL_NUMBER,
-                header.getFileSecurityMetadata()
-                        .getSecurityControlNumber());
+        FileSecurityMetadata security = header.getFileSecurityMetadata();
+        metacard.addAttribute(Nitf.CODE_WORDS, security.getCodewords());
+        metacard.addAttribute(Nitf.CONTROL_CODE, security.getControlAndHandling());
+        metacard.addAttribute(Nitf.RELEASE_INSTRUCTION, security.getReleaseInstructions());
+        metacard.addAttribute(Nitf.CONTROL_NUMBER, security.getSecurityControlNumber());
         metacard.addAttribute(Nitf.CLASSIFICATION_SYSTEM,
-                header.getFileSecurityMetadata()
-                        .getSecurityClassificationSystem());
-        metacard.addAttribute(Nitf.CLASSIFICATION_AUTHORITY,
-                header.getFileSecurityMetadata()
-                        .getClassificationAuthority());
+                security.getSecurityClassificationSystem());
+        metacard.addAttribute(Nitf.CLASSIFICATION_AUTHORITY, security.getClassificationAuthority());
         metacard.addAttribute(Nitf.CLASSIFICATION_AUTHORITY_TYPE,
-                header.getFileSecurityMetadata()
-                        .getClassificationAuthorityType());
-        metacard.addAttribute(Nitf.CLASSIFICATION_TEXT,
-                header.getFileSecurityMetadata()
-                        .getClassificationText());
-        metacard.addAttribute(Nitf.CLASSIFICATION_REASON,
-                header.getFileSecurityMetadata()
-                        .getClassificationReason());
-        String s = header.getFileSecurityMetadata()
-                .getSecuritySourceDate();
+                security.getClassificationAuthorityType());
+        metacard.addAttribute(Nitf.CLASSIFICATION_TEXT, security.getClassificationText());
+        metacard.addAttribute(Nitf.CLASSIFICATION_REASON, security.getClassificationReason());
+        String s = security.getSecuritySourceDate();
         /*
         if (StringUtils.isNotEmpty(s)) {
             // TODO: Convert to date
             metacard.addAttribute(Nitf.CLASSIFICATION_DATE, s);
         }
         */
-        metacard.addAttribute(Nitf.DECLASSIFICATION_TYPE,
-                header.getFileSecurityMetadata()
-                        .getDeclassificationType());
+        metacard.addAttribute(Nitf.DECLASSIFICATION_TYPE, security.getDeclassificationType());
 
         // TODO convert to date
         /*
         metacard.addAttribute(Nitf.DECLASSIFICATION_DATE,
-                header.getFileSecurityMetadata()
+                security()
                         .getDeclassificationDate());
 */
         // TODO: add the TRE's as attributes to the MetacardType Dynamically?
@@ -263,12 +295,20 @@ public class NitfInputTransformer implements InputTransformer {
         metacard.addAttribute(Nitf.NUMBER_OF_ROWS, imagesegmentHeader.getNumberOfRows());
         metacard.addAttribute(Nitf.NUMBER_OF_COLUMNS, imagesegmentHeader.getNumberOfColumns());
         metacard.addAttribute(Nitf.NUMBER_OF_BANDS, imagesegmentHeader.getNumBands());
-        metacard.addAttribute(Nitf.REPRESENTATION, imagesegmentHeader.getImageRepresentation().name());
-        metacard.addAttribute(Nitf.SUBCATEGORY, imagesegmentHeader.getImageCategory().name());
+        metacard.addAttribute(Nitf.REPRESENTATION,
+                imagesegmentHeader.getImageRepresentation()
+                        .name());
+        metacard.addAttribute(Nitf.SUBCATEGORY,
+                imagesegmentHeader.getImageCategory()
+                        .name());
         metacard.addAttribute(Nitf.BITS_PER_PIXEL_PER_BAND,
                 imagesegmentHeader.getNumberOfBitsPerPixelPerBand());
-        metacard.addAttribute(Nitf.IMAGE_MODE, imagesegmentHeader.getImageMode().name());
-        metacard.addAttribute(Nitf.COMPRESSION, imagesegmentHeader.getImageCompression().name());
+        metacard.addAttribute(Nitf.IMAGE_MODE,
+                imagesegmentHeader.getImageMode()
+                        .name());
+        metacard.addAttribute(Nitf.COMPRESSION,
+                imagesegmentHeader.getImageCompression()
+                        .name());
         metacard.addAttribute(Nitf.RATE_CODE, imagesegmentHeader.getCompressionRate());
         metacard.addAttribute(Nitf.TARGET_ID,
                 imagesegmentHeader.getImageTargetId()
@@ -510,56 +550,6 @@ public class NitfInputTransformer implements InputTransformer {
             outputThisTre(treXml, tre);
         }
         return treXml.toString();
-    }
-
-    private static void outputThisTre(StringBuilder treXml, Tre tre) {
-        treXml.append("    <tre name=\"");
-        treXml.append(tre.getName().trim());
-        treXml.append("\">\n");
-        for (TreEntry entry : tre.getEntries()) {
-            outputThisEntry(treXml, entry, 2);
-        }
-        treXml.append("    </tre>\n");
-    }
-
-    private static void doIndent(StringBuilder treXml, int indentLevel) {
-        for (int i = 0; i < indentLevel; ++i) {
-            treXml.append("  ");
-        }
-    }
-
-    private static void outputThisEntry(StringBuilder treXml, TreEntry entry, int indentLevel) {
-        if (entry.getFieldValue() != null) {
-            doIndent(treXml, indentLevel);
-            treXml.append("<field name=\"");
-            treXml.append(entry.getName());
-            treXml.append("\" value=\"");
-            treXml.append(entry.getFieldValue());
-            treXml.append("\" />\n");
-        }
-        if ((entry.getGroups() != null) && (!entry.getGroups()
-                .isEmpty())) {
-            doIndent(treXml, indentLevel);
-            treXml.append("<repeated name=\"");
-            treXml.append(entry.getName());
-            treXml.append("\" number=\"");
-            treXml.append(entry.getGroups()
-                    .size());
-            treXml.append("\">\n");
-            int i = 0;
-            for (TreGroup group : entry.getGroups()) {
-                doIndent(treXml, indentLevel + 1);
-                treXml.append(String.format("<group index=\"%d\">%n", i));
-                for (TreEntry groupEntry : group.getEntries()) {
-                    outputThisEntry(treXml, groupEntry, indentLevel + 2);
-                }
-                doIndent(treXml, indentLevel + 1);
-                treXml.append(String.format("</group>%n"));
-                i++;
-            }
-            doIndent(treXml, indentLevel);
-            treXml.append("</repeated>\n");
-        }
     }
 
     private String buildMetadataEntry(String label, int value) {
