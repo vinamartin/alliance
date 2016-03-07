@@ -14,7 +14,6 @@
 package ddf.catalog.transformer.nitf;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -64,14 +63,13 @@ public class TestNitfInputTransformer {
 
     @BeforeClass
     public static void setupBeforeClass() throws Exception {
-        MetacardFactory mf = new MetacardFactoryImpl();
+        metacardFactory = new MetacardFactoryImpl();
         MetacardTypeReader reader = new MetacardTypeReader();
-        reader.setMetacardFactory(mf);
+        reader.setMetacardFactory(metacardFactory);
         InputStream is = Thread.currentThread()
                 .getContextClassLoader()
                 .getResourceAsStream("nitf.xml");
         reader.parseMetacardDefinition(is);
-        metacardFactory = mf;
         System.setProperty("java.awt.headless", "true");
         Toolkit tk = Toolkit.getDefaultToolkit();
     }
@@ -134,7 +132,7 @@ public class TestNitfInputTransformer {
         validateDate(metacard, metacard.getEffectiveDate(), "1997-12-17 10:26:30");
         validateDate(metacard, metacard.getModifiedDate(), "1997-12-17 10:26:30");
         //validateDate(metacard, metacard.getExpirationDate(), "1997-12-17 10:26:30");
-        assertThat(Nitf.NAME, is(metacard.getMetacardType().getName()));
+        assertThat(metacard.getMetacardType().getName(), is(Nitf.NAME));
         //assertThat("", is(metacard.getResourceSize()));
         //assertThat("", is(metacard.getResourceURI()));
         //assertThat("", is(metacard.getSourceId()));
@@ -145,20 +143,19 @@ public class TestNitfInputTransformer {
         assertTrue(wkt.matches(
                 "^POLYGON \\(\\(85 32.98\\d*, 85.00\\d* 32.98\\d*, 85.00\\d* 32.98\\d*, 85 32.98\\d*, 85 32.98\\d*\\)\\)"));
 
-        assertThat(8, equalTo(metacard.getAttribute(Nitf.BITS_PER_PIXEL_PER_BAND)
-                .getValue()));
+        assertThat(metacard.getAttribute(Nitf.BITS_PER_PIXEL_PER_BAND).getValue(), is(8));
         assertThat(metacard.getAttribute(Nitf.IMAGE_ID)
                 .getValue(), is("- BASE IMAGE -"));
-        assertThat(metacard.getAttribute(Nitf.NUMBER_OF_COLUMNS).getValue(), equalTo(1024L));
-        assertThat(metacard.getAttribute(Nitf.NUMBER_OF_ROWS).getValue(), equalTo(1024L));
+        assertThat(metacard.getAttribute(Nitf.NUMBER_OF_COLUMNS).getValue(), is(1024L));
+        assertThat(metacard.getAttribute(Nitf.NUMBER_OF_ROWS).getValue(), is(1024L));
         assertThat(metacard.getAttribute(Nitf.COMPRESSION).getValue(), is("NOTCOMPRESSED"));
         assertThat(metacard.getAttribute(Nitf.IMAGE_MODE).getValue(), is("BLOCKINTERLEVE"));
         assertThat(metacard.getAttribute(Nitf.REPRESENTATION).getValue(), is("MONOCHROME"));
         assertThat(metacard.getAttribute(Nitf.SUBCATEGORY).getValue(), is("VISUAL"));
-        assertThat(metacard.getAttribute(Nitf.BITS_PER_PIXEL_PER_BAND).getValue(), equalTo(8));
-        assertThat(metacard.getAttribute(Nitf.NUMBER_OF_BANDS).getValue(), equalTo(1));
+        assertThat(metacard.getAttribute(Nitf.BITS_PER_PIXEL_PER_BAND).getValue(), is(8));
+        assertThat(metacard.getAttribute(Nitf.NUMBER_OF_BANDS).getValue(), is(1));
         assertThat(metacard.getAttribute(Nitf.ORIGINATING_STATION_ID).getValue(), is("i_3001a"));
-        assertThat(metacard.getAttribute(Nitf.COMPLEXITY_LEVEL).getValue(), equalTo(3));
+        assertThat(metacard.getAttribute(Nitf.COMPLEXITY_LEVEL).getValue(), is(3));
     }
 
     private void validateDate(Metacard metacard, Date date, String expectedDate) {
