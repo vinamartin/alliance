@@ -23,30 +23,37 @@ public class Client {
     public static void main(String args[]) throws Exception {
 
         if (args.length != 1) {
-            System.out.println("Unable to obtain IOR File :  No port specified.");
+            System.out.println("Unable to obtain IOR File :  Must specify URL to IOR file.");
         }
 
-        int port = Integer.parseInt(args[0]);
+        String iorURL = args[0];
 
         org.omg.CORBA.ORB orb = org.omg.CORBA.ORB.init(args, null);
 
         NsiliClient nsiliClient = new NsiliClient(orb);
 
         // Get IOR File
-        String iorFile = nsiliClient.getIorTextFile(port);
+        String iorFile = nsiliClient.getIorTextFile(iorURL);
 
         // Initialize Corba Library
         nsiliClient.initLibrary(iorFile);
 
         // Get the Managers from the Library
-        nsiliClient.getManagerTypes();
-        nsiliClient.initManagers();
+        String[] managers = nsiliClient.getManagerTypes();
+        nsiliClient.initManagers(managers);
 
         // CatalogMgr
         Query query = new Query("NSIL_ALL_VIEW", "");
-        nsiliClient.getHitCount(query);
-        DAG[] results = nsiliClient.submit_query(query);
-        nsiliClient.processAndPrintResults(results);
+        int hitCount = nsiliClient.getHitCount(query);
+        if (hitCount > 0) {
+            DAG[] results = nsiliClient.submit_query(query);
+            if (results != null) {
+                nsiliClient.processAndPrintResults(results);
+            }
+            else {
+                System.out.println("No results from query");
+            }
+        }
 
         // OrderMgr
         nsiliClient.validate_order(orb);
@@ -55,11 +62,16 @@ public class Client {
         // ProductMgr
         // For each packageElement in the order response, get the parameters and
         // related files for the product.
-        for(PackageElement packageElement : packageElements) {
-            Product product = packageElement.prod;
-            nsiliClient.get_parameters(orb, product);
-            nsiliClient.get_related_file_types(product);
-            nsiliClient.get_related_files(orb, product);
+        if (packageElements != null) {
+            for (PackageElement packageElement : packageElements) {
+                Product product = packageElement.prod;
+                nsiliClient.get_parameters(orb, product);
+                nsiliClient.get_related_file_types(product);
+                nsiliClient.get_related_files(orb, product);
+            }
+        }
+        else {
+            System.out.println("Order does not have any package elements");
         }
 
         orb.shutdown(true);

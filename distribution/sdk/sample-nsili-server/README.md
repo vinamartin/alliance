@@ -21,5 +21,7 @@ DDF Alliance contains a sample NSILI complaint server and client to be used for 
 mvn -Pcorba.server -Dexec.args=WEBPORT,CORBAPORT
 ```
 ```
-mvn -Pcorba.client -Dexec.args=WEBPORT
+mvn -Pcorba.client -Dexec.args=IORURL
+e.g. mvn -Pcorba.client -Dexec.args="http://localhost:20002/data/ior.txt"
+     mvn -Pcorba.client -Dexec.args="https://localhost:8993/services/nsili/ior.txt"
 ```

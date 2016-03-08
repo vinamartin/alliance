@@ -8,6 +8,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.helpers.IOUtils;
@@ -26,6 +37,7 @@ import org.codice.alliance.nsili.common.GIAS.GetParametersRequest;
 import org.codice.alliance.nsili.common.GIAS.GetRelatedFilesRequest;
 import org.codice.alliance.nsili.common.GIAS.HitCountRequest;
 import org.codice.alliance.nsili.common.GIAS.Library;
+import org.codice.alliance.nsili.common.GIAS.LibraryDescription;
 import org.codice.alliance.nsili.common.GIAS.LibraryHelper;
 import org.codice.alliance.nsili.common.GIAS.LibraryManager;
 import org.codice.alliance.nsili.common.GIAS.MediaType;
@@ -43,6 +55,7 @@ import org.codice.alliance.nsili.common.GIAS.SortAttribute;
 import org.codice.alliance.nsili.common.GIAS.SubmitQueryRequest;
 import org.codice.alliance.nsili.common.GIAS.TailoringSpec;
 import org.codice.alliance.nsili.common.GIAS.ValidationResults;
+import org.codice.alliance.nsili.common.NsiliManagerType;
 import org.codice.alliance.nsili.common.UCO.AbsTime;
 import org.codice.alliance.nsili.common.UCO.AbsTimeHelper;
 import org.codice.alliance.nsili.common.UCO.Coordinate2d;
@@ -78,10 +91,6 @@ public class NsiliClient {
 
     private static final AccessCriteria accessCriteria = new AccessCriteria("", "", "");
 
-    private static final String SERVER_PATH = "http://localhost:";
-
-    private static final String IOR_PATH = "/data/ior.txt";
-
     ORB orb;
 
     public NsiliClient(ORB orb) {
@@ -94,12 +103,17 @@ public class NsiliClient {
             System.err.println("Cannot read " + iorFilePath);
         }
         library = LibraryHelper.narrow(obj);
+        System.out.println("Library Initialized");
     }
 
     public String[] getManagerTypes() throws Exception {
-        String libraryName = library.get_library_description().library_name;
+        LibraryDescription libraryDescription = library.get_library_description();
+        System.out.println(
+                "NAME: " + libraryDescription.library_name + ", DESCRIPTION: "
+                        + libraryDescription.library_description + ", VERSION: "
+                        + libraryDescription.library_version_number);
         String[] types = library.get_manager_types();
-        System.out.println("Got Manager Types from " + libraryName + " : ");
+        System.out.println("Got Manager Types from " + libraryDescription.library_name + " : ");
         for (int i = 0; i < types.length; i++) {
             System.out.println("\t" + types[i]);
         }
@@ -107,48 +121,68 @@ public class NsiliClient {
         return types;
     }
 
-    public void initManagers() throws Exception {
-        // Get Mandatory Managers
-        System.out.println("Getting CatalogMgr from source...");
-        LibraryManager libraryManager = library.get_manager("CatalogMgr", accessCriteria);
-        catalogMgr = CatalogMgrHelper.narrow(libraryManager);
-        System.out.println("Source returned : " + catalogMgr.getClass() + "\n");
+    public void initManagers(String[] managers) throws Exception {
+        for (String managerType : managers){
+            if (managerType.equals(NsiliManagerType.CATALOG_MGR.getSpecName())) {
+                // Get Mandatory Managers
+                System.out.println("Getting CatalogMgr from source...");
+                LibraryManager libraryManager = library.get_manager("CatalogMgr", accessCriteria);
+                catalogMgr = CatalogMgrHelper.narrow(libraryManager);
+                System.out.println("Source returned : " + catalogMgr.getClass() + "\n");
+            }
+            else if (managerType.equals(NsiliManagerType.ORDER_MGR.getSpecName())) {
 
-        System.out.println("Getting OrderMgr from source...");
-        libraryManager = library.get_manager("OrderMgr", accessCriteria);
-        orderMgr = OrderMgrHelper.narrow(libraryManager);
-        System.out.println("Source returned : " + orderMgr.getClass() + "\n");
-
-        System.out.println("Getting ProductMgr from source...");
-        libraryManager = library.get_manager("ProductMgr", accessCriteria);
-        productMgr = ProductMgrHelper.narrow(libraryManager);
-        System.out.println("Source returned : " + productMgr.getClass() + "\n");
-
-        System.out.println("Getting DataModelMgr from source...");
-        libraryManager = library.get_manager("DataModelMgr", accessCriteria);
-        dataModelMgr = DataModelMgrHelper.narrow(libraryManager);
-        System.out.println("Source returned : " + dataModelMgr.getClass() + "\n");
+                System.out.println("Getting OrderMgr from source...");
+                LibraryManager libraryManager = library.get_manager("OrderMgr", accessCriteria);
+                orderMgr = OrderMgrHelper.narrow(libraryManager);
+                System.out.println("Source returned : " + orderMgr.getClass() + "\n");
+            }
+            else if (managerType.equals(NsiliManagerType.PRODUCT_MGR.getSpecName())) {
+                System.out.println("Getting ProductMgr from source...");
+                LibraryManager libraryManager = library.get_manager("ProductMgr", accessCriteria);
+                productMgr = ProductMgrHelper.narrow(libraryManager);
+                System.out.println("Source returned : " + productMgr.getClass() + "\n");
+            }
+            else if (managerType.equals(NsiliManagerType.DATA_MODEL_MGR.getSpecName())) {
+                System.out.println("Getting DataModelMgr from source...");
+                LibraryManager libraryManager = library.get_manager("DataModelMgr", accessCriteria);
+                dataModelMgr = DataModelMgrHelper.narrow(libraryManager);
+                System.out.println("Source returned : " + dataModelMgr.getClass() + "\n");
+            }
+        }
     }
 
     public int getHitCount(Query query) throws Exception {
-        System.out.println("Getting Hit Count From Query...");
-        HitCountRequest hitCountRequest = catalogMgr.hit_count(query, new NameValue[0]);
-        IntHolder intHolder = new IntHolder();
-        hitCountRequest.complete(intHolder);
-        System.out.println("Server responded with " + intHolder.value + " hit(s).\n");
-        return intHolder.value;
+        if (catalogMgr != null) {
+            System.out.println("Getting Hit Count From Query...");
+            HitCountRequest hitCountRequest = catalogMgr.hit_count(query, new NameValue[0]);
+            IntHolder intHolder = new IntHolder();
+            hitCountRequest.complete(intHolder);
+            System.out.println("Server responded with " + intHolder.value + " hit(s).\n");
+            return intHolder.value;
+        }
+        else {
+            System.out.println("catalogMgr was not initialized, unable to find hit count");
+            return -1;
+        }
     }
 
     public DAG[] submit_query(Query query) throws Exception {
-        System.out.println("Submitting Query To Server...");
-        DAGListHolder dagListHolder = new DAGListHolder();
-        SubmitQueryRequest submitQueryRequest = catalogMgr.submit_query(query,
-                new String[0],
-                new SortAttribute[0],
-                new NameValue[0]);
-        submitQueryRequest.complete_DAG_results(dagListHolder);
-        System.out.println("Server Responded with " + dagListHolder.value.length + " result(s).\n");
-        return dagListHolder.value;
+        if (catalogMgr != null) {
+            System.out.println("Submitting Query To Server...");
+            DAGListHolder dagListHolder = new DAGListHolder();
+            SubmitQueryRequest submitQueryRequest = catalogMgr.submit_query(query,
+                    new String[0],
+                    new SortAttribute[0],
+                    new NameValue[0]);
+            submitQueryRequest.complete_DAG_results(dagListHolder);
+            System.out.println("Server Responded with " + dagListHolder.value.length + " result(s).\n");
+            return dagListHolder.value;
+        }
+        else {
+            System.out.println("catalogMgr is not iniitalized, unable to submit queries");
+            return null;
+        }
     }
 
     public void processAndPrintResults(DAG[] results) {
@@ -189,16 +223,17 @@ public class NsiliClient {
                     String absHour = absTime.aTime.hour + ":" + absTime.aTime.minute + ":"
                             + absTime.aTime.second;
                     result = absDate + absHour;
-                } else if(node.value.type()
+                } else if (node.value.type()
                         .toString()
                         .contains("boolean")) {
                     result = "" + node.value.extract_boolean();
-                } else if(node.value.type()
+                } else if (node.value.type()
                         .toString()
                         .contains("Rectangle")) {
                     Rectangle rectangle = RectangleHelper.extract(node.value);
-                    result = "" +  rectangle.lower_right.x + "," + rectangle.lower_right.y + " " + rectangle.upper_left.x + "," + rectangle.upper_left.y;
-                } else if(node.value.type()
+                    result = "" + rectangle.lower_right.x + "," + rectangle.lower_right.y + " "
+                            + rectangle.upper_left.x + "," + rectangle.upper_left.y;
+                } else if (node.value.type()
                         .toString()
                         .contains("Short")) {
                     result = "" + node.value.extract_short();
@@ -245,100 +280,126 @@ public class NsiliClient {
     }
 
     public void validate_order(ORB orb) throws Exception {
-        System.out.println("Sending a Validate Order Request to Server...");
+        if (orderMgr != null) {
+            System.out.println("Sending a Validate Order Request to Server...");
 
-        NameValue[] properties = {new NameValue("", orb.create_any())};
-        OrderContents order = createOrder(orb);
-        ValidationResults validationResults = orderMgr.validate_order(order, properties);
+            NameValue[] properties = {new NameValue("", orb.create_any())};
+            OrderContents order = createOrder(orb);
+            ValidationResults validationResults = orderMgr.validate_order(order, properties);
 
-        System.out.println("Validation Results: ");
-        System.out.println("\tValid : " + validationResults.valid + "\n\tWarning : "
-                + validationResults.warning + "\n\tDetails : " + validationResults.details + "\n");
+            System.out.println("Validation Results: ");
+            System.out.println("\tValid : " + validationResults.valid + "\n\tWarning : " + validationResults.warning + "\n\tDetails : " + validationResults.details
+                    + "\n");
+        }
+        else
+        {
+            System.out.println("orderMgr is not initialized, unable to validate order request");
+        }
     }
 
     public PackageElement[] order(ORB orb) throws Exception {
-        System.out.println("Sending order request...");
-        NameValue[] properties = {new NameValue("", orb.create_any())};
-        OrderContents order = createOrder(orb);
+        if (orderMgr != null) {
+            System.out.println("Sending order request...");
+            NameValue[] properties = {new NameValue("", orb.create_any())};
+            OrderContents order = createOrder(orb);
 
-        OrderRequest validationResults = orderMgr.order(order, properties);
-        System.out.println("Completing OrderRequest...");
+            OrderRequest validationResults = orderMgr.order(order, properties);
+            System.out.println("Completing OrderRequest...");
 
-        DeliveryManifestHolder deliveryManifestHolder = new DeliveryManifestHolder();
-        validationResults.complete(deliveryManifestHolder);
-        DeliveryManifest deliveryManifest = deliveryManifestHolder.value;
+            DeliveryManifestHolder deliveryManifestHolder = new DeliveryManifestHolder();
+            validationResults.complete(deliveryManifestHolder);
+            DeliveryManifest deliveryManifest = deliveryManifestHolder.value;
 
-        System.out.println("Completed Order :");
-        System.out.println(deliveryManifest.package_name);
+            System.out.println("Completed Order :");
+            System.out.println(deliveryManifest.package_name);
 
-        PackageElement[] elements = deliveryManifest.elements;
-        for (int i = 0; i < elements.length; i++) {
+            PackageElement[] elements = deliveryManifest.elements;
+            for (int i = 0; i < elements.length; i++) {
 
-            String[] files = elements[i].files;
+                String[] files = elements[i].files;
 
-            for (int c = 0; c < files.length; c++) {
-                System.out.println("\t" + files[c]);
+                for (int c = 0; c < files.length; c++) {
+                    System.out.println("\t" + files[c]);
+                }
+
             }
-
+            System.out.println();
+            return elements;
         }
-        System.out.println();
-        return elements;
-
+        else {
+            System.out.println("orderMgr is not initialized, unable to submit order");
+            return null;
+        }
     }
 
     public void get_parameters(ORB orb, Product product) throws Exception {
-        System.out.println("Sending Get Parameters Request to Server...");
+        if (productMgr != null) {
+            System.out.println("Sending Get Parameters Request to Server...");
 
-        String[] desired_parameters = {"param1", "param2"};
-        NameValue[] properties = {new NameValue("", orb.create_any())};
+            String[] desired_parameters = {"param1", "param2"};
+            NameValue[] properties = {new NameValue("", orb.create_any())};
 
-        GetParametersRequest parametersRequest = productMgr.get_parameters(product,
-                desired_parameters,
-                properties);
-        System.out.println("Completing GetParameters Request ...");
+            GetParametersRequest parametersRequest = productMgr.get_parameters(product,
+                    desired_parameters,
+                    properties);
+            System.out.println("Completing GetParameters Request ...");
 
-        DAGHolder dagHolder = new DAGHolder();
-        parametersRequest.complete(dagHolder);
+            DAGHolder dagHolder = new DAGHolder();
+            parametersRequest.complete(dagHolder);
 
-        DAG dag = dagHolder.value;
-        System.out.println("Resulting Parameters From Server :");
-        printDAGAttributes(dag);
-        System.out.println();
+            DAG dag = dagHolder.value;
+            System.out.println("Resulting Parameters From Server :");
+            printDAGAttributes(dag);
+            System.out.println();
+        }
+        else {
+            System.out.println("productMgr is not initialized, unable to get parameters");
+        }
     }
 
     public void get_related_file_types(Product product) throws Exception {
-        System.out.println("Sending Get Related File Types Request...");
-        String[] related_file_types = productMgr.get_related_file_types(product);
-        System.out.println("Related File Types : ");
-        for (int i = 0; i < related_file_types.length; i++) {
-            System.out.println(related_file_types[i]);
+        if (productMgr != null) {
+            System.out.println("Sending Get Related File Types Request...");
+            String[] related_file_types = productMgr.get_related_file_types(product);
+            System.out.println("Related File Types : ");
+            for (int i = 0; i < related_file_types.length; i++) {
+                System.out.println(related_file_types[i]);
+            }
+            System.out.println();
         }
-        System.out.println();
+        else {
+            System.out.println("productMgr is not initialized, unable to get related file types");
+        }
     }
 
     public void get_related_files(ORB orb, Product product) throws Exception {
-        System.out.println("Sending Get Related Files Request...");
+        if (productMgr != null) {
+            System.out.println("Sending Get Related Files Request...");
 
-        FileLocation fileLocation = new FileLocation("", "", "", "", "");
-        NameValue[] properties = {new NameValue("", orb.create_any())};
-        Product[] products = {product};
+            FileLocation fileLocation = new FileLocation("", "", "", "", "");
+            NameValue[] properties = {new NameValue("", orb.create_any())};
+            Product[] products = {product};
 
-        GetRelatedFilesRequest relatedFilesRequest = productMgr.get_related_files(products,
-                fileLocation,
-                "",
-                properties);
-        System.out.println("Completing GetRelatedFilesRequest...");
+            GetRelatedFilesRequest relatedFilesRequest = productMgr.get_related_files(products,
+                    fileLocation,
+                    "",
+                    properties);
+            System.out.println("Completing GetRelatedFilesRequest...");
 
-        NameListHolder locations = new NameListHolder();
+            NameListHolder locations = new NameListHolder();
 
-        relatedFilesRequest.complete(locations);
+            relatedFilesRequest.complete(locations);
 
-        System.out.println("Location List : ");
-        String[] locationList = locations.value;
-        for (int i = 0; i < locationList.length; i++) {
-            System.out.println(locationList[i]);
+            System.out.println("Location List : ");
+            String[] locationList = locations.value;
+            for (int i = 0; i < locationList.length; i++) {
+                System.out.println(locationList[i]);
+            }
+            System.out.println();
         }
-        System.out.println();
+        else {
+            System.out.println("productMgr is not initialized, unable to get related files");
+        }
     }
 
     public OrderContents createOrder(ORB orb) throws Exception {
@@ -375,13 +436,14 @@ public class NsiliClient {
         return order;
     }
 
-    public String getIorTextFile(int port) throws Exception {
-        String url = SERVER_PATH + port + IOR_PATH;
+    public String getIorTextFile(String iorURL) throws Exception {
         System.out.println("Downloading IOR File From Server...");
         String myString = "";
 
         try {
-            URL fileDownload = new URL(url);
+            //Disable certificate checking as this is only a test client
+            doTrustAllCertificates();
+            URL fileDownload = new URL(iorURL);
             BufferedInputStream inputStream = new BufferedInputStream(fileDownload.openStream());
             myString = IOUtils.toString(inputStream, "UTF-8");
         } catch (IOException e) {
@@ -396,4 +458,33 @@ public class NsiliClient {
         throw new Exception("Error recieving IOR File");
     }
 
+    // Trust All Certifications
+    private void doTrustAllCertificates() throws NoSuchAlgorithmException, KeyManagementException {
+        TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s)
+                    throws CertificateException {
+                return;
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s)
+                    throws CertificateException {
+                return;
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        }};
+
+        // Set HttpsURLConnection settings
+        SSLContext sslContext = SSLContext.getInstance("SSL");
+        sslContext.init(null, trustAllCerts, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+        HostnameVerifier hostnameVerifier =
+                (s, sslSession) -> s.equalsIgnoreCase(sslSession.getPeerHost());
+        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
+    }
 }
