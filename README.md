@@ -11,12 +11,11 @@
  */
 -->
 <img src="https://tools.codice.org/wiki/download/attachments/1179800/ddf.jpg"/>
-# [Distributed Data Framework \(DDF\) : Alliance](http://ddf.codice.org/)
+# Codice Alliance
 [![Join the chat at https://gitter.im/codice/ddf](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/codice/ddf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/3703/badge.svg)](https://scan.coverity.com/projects/3703)
 
-
-Distributed Data Framework (DDF) Alliance is an open source, modular integration framework with additional NATO support.
+Codice Alliance is an open source, modular integration framework building on DDF with the addition of DoD/IC and NATO support capabilities.
 
 ## Features
  * Standardization
