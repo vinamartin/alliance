@@ -24,7 +24,7 @@
     <groupId>org.codice.alliance</groupId>
     <artifactId>catalog</artifactId>
     <packaging>pom</packaging>
-    <name>DDF :: Alliance :: Catalog</name>
+    <name>Alliance :: Catalog</name>
 
     <modules>
         <module>nsili</module>

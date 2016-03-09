@@ -18,8 +18,8 @@
     <artifactId>alliance</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>DDF :: Alliance</name>
-    <description>Distributed Data Framework (DDF) Alliance</description>
+    <name>Alliance</name>
+    <description>Codice Alliance</description>
     <inceptionYear>2016</inceptionYear>
     <organization>
         <name>Codice Foundation</name>
