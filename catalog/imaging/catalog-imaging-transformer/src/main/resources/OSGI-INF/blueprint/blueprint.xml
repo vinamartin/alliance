@@ -14,10 +14,10 @@
  -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <reference id="metacardFactory" interface="ddf.catalog.data.dynamic.api.MetacardFactory" />
+    <bean id="metacardType" class="ddf.catalog.transformer.nitf.NitfMetacardType"/>
 
     <bean id="transformer" class="ddf.catalog.transformer.nitf.NitfInputTransformer">
-        <property name="metacardFactory" ref="metacardFactory"/>
+        <property name="nitfMetacardType" ref="metacardType"/>
     </bean>
 
     <service ref="transformer" interface="ddf.catalog.transform.InputTransformer">
@@ -33,6 +33,12 @@
                     <value>image/nitf</value>
                 </list>
             </entry>
+        </service-properties>
+    </service>
+
+    <service ref="metacardType" interface="ddf.catalog.data.MetacardType">
+        <service-properties>
+            <entry key="name" value="nitf"/>
         </service-properties>
     </service>
 </blueprint>

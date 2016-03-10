@@ -15,14 +15,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.codice.alliance</groupId>
-        <artifactId>catalog</artifactId>
+        <artifactId>alliance-imaging</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>imaging</artifactId>
+    <artifactId>alliance-imaging</artifactId>
     <groupId>org.codice.alliance.imaging</groupId>
     <packaging>pom</packaging>
-    <name>DDF :: Alliance :: Imaging</name>
+    <name>Alliance :: Imaging</name>
 
     <properties>
         <nitf-imaging.version>0.2</nitf-imaging.version>
@@ -43,6 +43,7 @@
         </dependencies>
     </dependencyManagement>
     <modules>
-        <module>transformer</module>
+        <module>catalog-imaging-transformer</module>
+        <module>catalog-imaging-app</module>
     </modules>
 </project>
