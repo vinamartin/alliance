@@ -12,7 +12,9 @@
  *
  **/
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.codice.alliance</groupId>
@@ -135,6 +137,16 @@
             <classifier>features</classifier>
             <type>xml</type>
         </dependency>
+        <dependency>
+            <groupId>org.codice.alliance.distribution</groupId>
+            <artifactId>webconsole-branding-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codice.alliance.distribution</groupId>
+            <artifactId>webconsole-branding</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -180,22 +192,47 @@
                             <!-- When adding a new application, the feature reference must be located in here and also in org.apache.karaf.features.cfg -->
                             <descriptors>
                                 <!-- DDF Apps -->
-                                <descriptor>mvn:org.codice.ddf/kernel/${ddf.version}/xml/features</descriptor>
-                                <descriptor>mvn:ddf.platform/platform-app/${ddf.version}/xml/features</descriptor>
-                                <descriptor>mvn:ddf.security/security-services-app/${ddf.version}/xml/features</descriptor>
-                                <descriptor>mvn:ddf.catalog/catalog-app/${ddf.version}/xml/features</descriptor>
-                                <descriptor>mvn:ddf.catalog.solr/solr-app/${ddf.version}/xml/features</descriptor>
-                                <descriptor>mvn:org.codice.ddf.spatial/spatial-app/${ddf.version}/xml/features</descriptor>
-                                <descriptor>mvn:ddf.ui.search/search-ui-app/${ddf.version}/xml/features</descriptor>
-                                <descriptor>mvn:ddf.admin/admin-app/${ddf.version}/xml/features</descriptor>
-                                <descriptor>mvn:org.codice.ddf.spatial/geowebcache-app/${ddf.version}/xml/features</descriptor>
-                                <descriptor>mvn:org.codice.ddf.resourcemanagement/resourcemanagement-app/${ddf.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.codice.ddf/kernel/${ddf.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:ddf.platform/platform-app/${ddf.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:ddf.security/security-services-app/${ddf.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:ddf.catalog/catalog-app/${ddf.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:ddf.catalog.solr/solr-app/${ddf.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:org.codice.ddf.spatial/spatial-app/${ddf.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:ddf.ui.search/search-ui-app/${ddf.version}/xml/features
+                                </descriptor>
+                                <descriptor>mvn:ddf.admin/admin-app/${ddf.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:org.codice.ddf.spatial/geowebcache-app/${ddf.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:org.codice.ddf.resourcemanagement/resourcemanagement-app/${ddf.version}/xml/features
+                                </descriptor>
 
                                 <!-- Alliance Apps -->
-                                <descriptor>mvn:org.codice.alliance.nsili/nsili-app/${project.version}/xml/features</descriptor>
-                                <descriptor>mvn:org.codice.alliance.distribution/install-profiles/${project.version}/xml/features</descriptor>
-                                <descriptor>mvn:org.codice.alliance.imaging/alliance-imaging-app/${project.version}/xml/features</descriptor>
-                                <descriptor>file:${basedir}/target/classes/alliance-features.xml</descriptor>
+                                <descriptor>
+                                    mvn:org.codice.alliance.nsili/nsili-app/${project.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:org.codice.alliance.distribution/install-profiles/${project.version}/xml/features
+                                </descriptor>
+                                <descriptor>
+                                    mvn:org.codice.alliance.imaging/alliance-imaging-app/${project.version}/xml/features
+                                </descriptor>
+                                <descriptor>file:${basedir}/target/classes/alliance-features.xml
+                                </descriptor>
                             </descriptors>
                             <repository>${setup.folder}/ddf-${ddf.version}/system</repository>
                         </configuration>
@@ -262,7 +299,8 @@
                                     <groupId>ddf</groupId>
                                     <artifactId>docs</artifactId>
                                     <version>${ddf.version}</version>
-                                    <outputDirectory>${setup.folder}/documentation/ddf</outputDirectory>
+                                    <outputDirectory>${setup.folder}/documentation/ddf
+                                    </outputDirectory>
                                     <classifier>export</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -270,7 +308,8 @@
                                     <groupId>ddf.admin</groupId>
                                     <artifactId>docs</artifactId>
                                     <version>${ddf.version}</version>
-                                    <outputDirectory>${setup.folder}/documentation/admin</outputDirectory>
+                                    <outputDirectory>${setup.folder}/documentation/admin
+                                    </outputDirectory>
                                     <classifier>export</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -278,7 +317,8 @@
                                     <groupId>ddf.catalog</groupId>
                                     <artifactId>docs</artifactId>
                                     <version>${ddf.version}</version>
-                                    <outputDirectory>${setup.folder}/documentation/catalog</outputDirectory>
+                                    <outputDirectory>${setup.folder}/documentation/catalog
+                                    </outputDirectory>
                                     <classifier>export</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -286,7 +326,8 @@
                                     <groupId>ddf.catalog.solr</groupId>
                                     <artifactId>docs</artifactId>
                                     <version>${ddf.version}</version>
-                                    <outputDirectory>${setup.folder}/documentation/solr</outputDirectory>
+                                    <outputDirectory>${setup.folder}/documentation/solr
+                                    </outputDirectory>
                                     <classifier>export</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -294,7 +335,8 @@
                                     <groupId>ddf.platform</groupId>
                                     <artifactId>docs</artifactId>
                                     <version>${ddf.version}</version>
-                                    <outputDirectory>${setup.folder}/documentation/platform</outputDirectory>
+                                    <outputDirectory>${setup.folder}/documentation/platform
+                                    </outputDirectory>
                                     <classifier>export</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -302,7 +344,8 @@
                                     <groupId>ddf.platform.security</groupId>
                                     <artifactId>docs</artifactId>
                                     <version>${ddf.version}</version>
-                                    <outputDirectory>${setup.folder}/documentation/security</outputDirectory>
+                                    <outputDirectory>${setup.folder}/documentation/security
+                                    </outputDirectory>
                                     <classifier>export</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -310,7 +353,8 @@
                                     <groupId>org.codice.ddf.spatial</groupId>
                                     <artifactId>docs</artifactId>
                                     <version>${ddf.version}</version>
-                                    <outputDirectory>${setup.folder}/documentation/spatial</outputDirectory>
+                                    <outputDirectory>${setup.folder}/documentation/spatial
+                                    </outputDirectory>
                                     <classifier>export</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -318,7 +362,8 @@
                                     <groupId>ddf.ui</groupId>
                                     <artifactId>docs</artifactId>
                                     <version>${ddf.version}</version>
-                                    <outputDirectory>${setup.folder}/documentation/ui</outputDirectory>
+                                    <outputDirectory>${setup.folder}/documentation/ui
+                                    </outputDirectory>
                                     <classifier>export</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -342,7 +387,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <file>${project.basedir}/target/dependencies/ddf-kernel-${ddf.version}/etc/system.properties</file>
+                    <file>
+                        ${project.basedir}/target/dependencies/ddf-kernel-${ddf.version}/etc/system.properties
+                    </file>
                     <replacements>
                         <replacement>
                             <token>ddf.distribution</token>
@@ -369,28 +416,36 @@
                         <configuration>
                             <tasks>
                                 <copy todir="${setup.folder}/documentation/ddf">
-                                    <fileset dir="${setup.folder}/documentation/ddf/docs-${ddf.version}"/>
+                                    <fileset
+                                            dir="${setup.folder}/documentation/ddf/docs-${ddf.version}"/>
                                 </copy>
                                 <copy todir="${setup.folder}/documentation/admin">
-                                    <fileset dir="${setup.folder}/documentation/admin/docs-${ddf.version}"/>
+                                    <fileset
+                                            dir="${setup.folder}/documentation/admin/docs-${ddf.version}"/>
                                 </copy>
                                 <copy todir="${setup.folder}/documentation/catalog">
-                                    <fileset dir="${setup.folder}/documentation/catalog/docs-${ddf.version}"/>
+                                    <fileset
+                                            dir="${setup.folder}/documentation/catalog/docs-${ddf.version}"/>
                                 </copy>
                                 <copy todir="${setup.folder}/documentation/solr">
-                                    <fileset dir="${setup.folder}/documentation/solr/docs-${ddf.version}"/>
+                                    <fileset
+                                            dir="${setup.folder}/documentation/solr/docs-${ddf.version}"/>
                                 </copy>
                                 <copy todir="${setup.folder}/documentation/platform">
-                                    <fileset dir="${setup.folder}/documentation/platform/docs-${ddf.version}"/>
+                                    <fileset
+                                            dir="${setup.folder}/documentation/platform/docs-${ddf.version}"/>
                                 </copy>
                                 <copy todir="${setup.folder}/documentation/security">
-                                    <fileset dir="${setup.folder}/documentation/security/docs-${ddf.version}"/>
+                                    <fileset
+                                            dir="${setup.folder}/documentation/security/docs-${ddf.version}"/>
                                 </copy>
                                 <copy todir="${setup.folder}/documentation/spatial">
-                                    <fileset dir="${setup.folder}/documentation/spatial/docs-${ddf.version}"/>
+                                    <fileset
+                                            dir="${setup.folder}/documentation/spatial/docs-${ddf.version}"/>
                                 </copy>
                                 <copy todir="${setup.folder}/documentation/ui">
-                                    <fileset dir="${setup.folder}/documentation/ui/docs-${ddf.version}"/>
+                                    <fileset
+                                            dir="${setup.folder}/documentation/ui/docs-${ddf.version}"/>
                                 </copy>
                             </tasks>
                         </configuration>
