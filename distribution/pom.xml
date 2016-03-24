@@ -21,13 +21,18 @@
         <artifactId>alliance</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <groupId>org.codice.alliance</groupId>
+
     <artifactId>distribution</artifactId>
+    <groupId>org.codice.alliance</groupId>
     <packaging>pom</packaging>
-    <name>DDF :: Alliance :: Distribution</name>
+    <name>Alliance :: Distribution</name>
 
     <modules>
         <module>sdk</module>
+        <module>console-branding</module>
+        <module>common</module>
+        <module>install-profiles</module>
+        <module>alliance</module>
     </modules>
 
     <build>
