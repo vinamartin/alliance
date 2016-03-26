@@ -234,7 +234,7 @@
                                 <descriptor>file:${basedir}/target/classes/alliance-features.xml
                                 </descriptor>
                             </descriptors>
-                            <repository>${setup.folder}/ddf-${ddf.version}/system</repository>
+                            <repository>${setup.folder}/ddf-kernel-${ddf.version}/system</repository>
                         </configuration>
                     </execution>
                 </executions>
