@@ -22,7 +22,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>support-pom</artifactId>
+    <artifactId>support</artifactId>
     <groupId>com.connexta.alliance</groupId>
     <packaging>pom</packaging>
     <name>Alliance :: Support</name>
