@@ -17,10 +17,11 @@
 	
 	<parent>
 		<groupId>com.connexta.alliance</groupId>
-		<artifactId>support-pom</artifactId>
+		<artifactId>support</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 
+	<groupId>com.connexta.alliance</groupId>
 	<artifactId>support-checkstyle</artifactId>
 	<name>Alliance Support Checkstyle</name>
 	<description>Alliance checkstyle contains file for checking builds</description>
