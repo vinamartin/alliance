@@ -1,10 +1,10 @@
 /**
  * Copyright (c) Codice Foundation
- * <p>
+ * <p/>
  * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or any later version.
- * <p>
+ * <p/>
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details. A copy of the GNU Lesser General Public License
@@ -39,7 +39,6 @@ import org.codice.alliance.video.stream.mpegts.netty.StreamProcessor;
 import org.codice.ddf.security.common.Security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
@@ -195,8 +194,27 @@ public class CatalogRolloverAction extends BaseRolloverAction {
                                 .getId()));
     }
 
+    /**
+     * @param sleep milliseconds to sleep
+     * @return true if interrupted
+     */
+    private boolean sleep(long sleep) {
+        try {
+            Thread.sleep(sleep);
+        } catch (InterruptedException e) {
+            LOGGER.warn("interrupted while waiting to attempt update request", e);
+            Thread.interrupted();
+            return true;
+        }
+        return false;
+    }
+
     private void submitUpdateRequestWithRetry(UpdateRequest updateRequest,
             Consumer<Update> updateConsumer) throws RolloverActionException {
+
+        if (sleep(TimeUnit.SECONDS.toMillis(streamProcessor.getMetacardUpdateInitialDelay()))) {
+            return;
+        }
 
         long wait = INITIAL_RETRY_WAIT_MILLISECONDS;
         long start = System.currentTimeMillis();
@@ -210,11 +228,7 @@ public class CatalogRolloverAction extends BaseRolloverAction {
                     throw e;
                 } else {
                     LOGGER.warn("failed to update catalog, will retry in {} milliseconds", wait);
-                    try {
-                        Thread.sleep(wait);
-                    } catch (InterruptedException e1) {
-                        LOGGER.warn("interrupted while waiting to retry update request", e1);
-                        Thread.interrupted();
+                    if (sleep(wait)) {
                         return;
                     }
                     long timeRemaining =

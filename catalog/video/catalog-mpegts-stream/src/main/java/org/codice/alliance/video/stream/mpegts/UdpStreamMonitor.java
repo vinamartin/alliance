@@ -1,10 +1,10 @@
 /**
  * Copyright (c) Codice Foundation
- * <p>
+ * <p/>
  * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or any later version.
- * <p>
+ * <p/>
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details. A copy of the GNU Lesser General Public License
@@ -33,7 +33,6 @@ import org.codice.alliance.video.stream.mpegts.netty.UdpStreamProcessor;
 import org.codice.alliance.video.stream.mpegts.rollover.RolloverCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import ddf.catalog.CatalogFramework;
 import ddf.catalog.data.MetacardType;
@@ -105,6 +104,12 @@ public class UdpStreamMonitor implements StreamMonitor {
     /**
      * This is the id string used in metatype.xml.
      */
+    private static final String METATYPE_METACARD_UPDATE_INITIAL_DELAY =
+            "metacardUpdateInitialDelay";
+
+    /**
+     * This is the id string used in metatype.xml.
+     */
     private static final String METATYPE_FILENAME_TEMPLATE = "filenameTemplate";
 
     private UdpStreamProcessor udpStreamProcessor;
@@ -127,6 +132,13 @@ public class UdpStreamMonitor implements StreamMonitor {
 
     UdpStreamMonitor(UdpStreamProcessor udpStreamProcessor) {
         this.udpStreamProcessor = udpStreamProcessor;
+    }
+
+    /**
+     * @param metacardUpdateInitialDelay must be non-null and >=0 and <={@link UdpStreamProcessor#MAX_METACARD_UPDATE_INITIAL_DELAY}
+     */
+    public void setMetacardUpdateInitialDelay(Long metacardUpdateInitialDelay) {
+        udpStreamProcessor.setMetacardUpdateInitialDelay(metacardUpdateInitialDelay);
     }
 
     /**
@@ -330,6 +342,11 @@ public class UdpStreamMonitor implements StreamMonitor {
             if (!checkMetaTypeClass(properties, METATYPE_FILENAME_TEMPLATE, String.class)) {
                 return;
             }
+            if (!checkMetaTypeClass(properties,
+                    METATYPE_METACARD_UPDATE_INITIAL_DELAY,
+                    Long.class)) {
+                return;
+            }
 
             setMonitoredAddress((String) properties.get(METATYPE_MONITORED_ADDRESS));
             setMonitoredPort((Integer) properties.get(METATYPE_MONITORED_PORT));
@@ -338,6 +355,8 @@ public class UdpStreamMonitor implements StreamMonitor {
             setElapsedTimeRolloverCondition((Long) properties.get(
                     METATYPE_ELAPSED_TIME_ROLLOVER_CONDITION));
             setFilenameTemplate((String) properties.get(METATYPE_FILENAME_TEMPLATE));
+            setMetacardUpdateInitialDelay((Long) properties.get(
+                    METATYPE_METACARD_UPDATE_INITIAL_DELAY));
 
             init();
         }

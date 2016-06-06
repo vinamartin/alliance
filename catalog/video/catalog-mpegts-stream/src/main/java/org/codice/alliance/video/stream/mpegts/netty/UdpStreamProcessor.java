@@ -61,6 +61,8 @@ import io.netty.channel.ChannelHandler;
  */
 public class UdpStreamProcessor implements StreamProcessor {
 
+    public static final long MAX_METACARD_UPDATE_INITIAL_DELAY = TimeUnit.MINUTES.toSeconds(1);
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UdpStreamProcessor.class);
 
     private static final boolean IS_KLV_PARSING_ENABLED = false;
@@ -76,6 +78,11 @@ public class UdpStreamProcessor implements StreamProcessor {
      * Number of milliseconds to wait until first rollover check. See {@link Timer#scheduleAtFixedRate(TimerTask, long, long)}.
      */
     private static final long ROLLOVER_CHECK_DELAY = ONE_SECOND;
+
+    /**
+     * Number of seconds to delay metacard updates.
+     */
+    private static final long DEFAULT_METACARD_UPDATE_INITIAL_DELAY = 2;
 
     private PacketBuffer packetBuffer = new PacketBuffer();
 
@@ -109,8 +116,28 @@ public class UdpStreamProcessor implements StreamProcessor {
 
     private StreamMonitor streamMonitor;
 
+    private long metacardUpdateInitialDelay = DEFAULT_METACARD_UPDATE_INITIAL_DELAY;
+
     public UdpStreamProcessor(StreamMonitor streamMonitor) {
         this.streamMonitor = streamMonitor;
+    }
+
+    @Override
+    public long getMetacardUpdateInitialDelay() {
+        return metacardUpdateInitialDelay;
+    }
+
+    /**
+     * @param metacardUpdateInitialDelay must be non-null and >=0 and <={@link #MAX_METACARD_UPDATE_INITIAL_DELAY}
+     */
+    public void setMetacardUpdateInitialDelay(Long metacardUpdateInitialDelay) {
+        notNull(metacardUpdateInitialDelay, "metacardUpdateInitialDelay must be non-null");
+        Validate.inclusiveBetween(0,
+                MAX_METACARD_UPDATE_INITIAL_DELAY,
+                metacardUpdateInitialDelay,
+                String.format("metacardUpdateInitialDelay must be >=0 and <=%d",
+                        MAX_METACARD_UPDATE_INITIAL_DELAY));
+        this.metacardUpdateInitialDelay = metacardUpdateInitialDelay;
     }
 
     @Override
@@ -155,6 +182,7 @@ public class UdpStreamProcessor implements StreamProcessor {
                 ", packetBuffer=" + packetBuffer +
                 ", rolloverCondition=" + rolloverCondition +
                 ", stanag4609Processor=" + stanag4609Processor +
+                ", metacardUpdateInitialDelay=" + metacardUpdateInitialDelay +
                 '}';
     }
 
