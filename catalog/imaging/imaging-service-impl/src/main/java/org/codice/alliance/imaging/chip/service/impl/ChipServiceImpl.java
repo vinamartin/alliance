@@ -13,14 +13,17 @@
  */
 package org.codice.alliance.imaging.chip.service.impl;
 
-import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.util.function.ToDoubleFunction;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.codice.alliance.imaging.chip.service.api.ChipOutOfBoundsException;
 import org.codice.alliance.imaging.chip.service.api.ChipService;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.la4j.Vector;
+import org.la4j.vector.dense.BasicVector;
+
 import com.vividsolutions.jts.geom.Polygon;
 
 /**
@@ -39,25 +42,81 @@ public class ChipServiceImpl implements ChipService {
         validateNotNull(inputImagePolygon, "inputImagePolygon");
         validateNotNull(chipPolygon, "chipPolygon");
 
-        if (!inputImagePolygon.contains(chipPolygon.getEnvelope())) {
-            throw new ChipOutOfBoundsException(
-                    "The envelope of the chip polygon must reside entirely within the image.");
+        List<Vector> imageVectors = createVectorListFromPolygon(inputImagePolygon);
+        List<Vector> chipVectors = createVectorListFromPolygon(chipPolygon);
+
+        CoordinateConverter converter = new CoordinateConverter(inputImage, imageVectors);
+        List<Vector> pixels = converter.toPixels(chipVectors);
+
+        int maxX = findMax(pixels, v -> v.get(0));
+        int maxY = findMax(pixels, v -> v.get(1));
+        int minX = findMin(pixels, v -> v.get(0));
+        int minY = findMin(pixels, v -> v.get(1));
+
+        return crop(inputImage, minX, minY, maxX - minX, maxY - minY);
+    }
+
+    private int findMin(List<Vector> vectors, Function<Vector, Double> selector) {
+        double minimum = vectors.stream()
+                .map(selector)
+                .min((a, b) -> a.compareTo(b))
+                .get();
+
+        return (int) Math.round(minimum);
+    }
+
+    private int findMax(List<Vector> vectors, Function<Vector, Double> selector) {
+        double maximum = vectors.stream()
+                .map(selector)
+                .max((a, b) -> a.compareTo(b))
+                .get();
+
+        return (int) Math.round(maximum);
+    }
+
+    public BufferedImage crop(BufferedImage inputImage, int x, int y, int w, int h)
+            throws ChipOutOfBoundsException {
+        validateNotNull(inputImage, "inputImage");
+
+        if (w < 0 || h < 0) {
+            throw new ChipOutOfBoundsException(String.format(
+                    "method arguments 'w', 'h' may not be less than 0. Values were %s and %s.",
+                    w,
+                    h));
         }
 
-        Rectangle<Point> imagePixelBounds = getImagePixelBounds(inputImage);
-        Rectangle<Coordinate> imageGeoBounds = getGeoBounds(inputImagePolygon);
-        Rectangle<Coordinate> chipBounds = getGeoBounds(chipPolygon);
-        GeoImageDescriptor geoImageDescriptor = new GeoImageDescriptor(imagePixelBounds,
-                imageGeoBounds);
-        GeoChipDescriptor geoChipDescriptor = new GeoChipDescriptor(geoImageDescriptor, chipBounds);
-        Rectangle<Point> chipPixelRectangle = geoChipDescriptor.getPixelRectangle();
+        if (x > inputImage.getWidth() || y > inputImage.getHeight()) {
+            throw new ChipOutOfBoundsException(String.format(
+                    "method arguments 'x' and 'y' may not be greater than the width and height of the supplied image."
+                    + "\n   image width = %s, x = %s\n   image height = %s, y = %s",
+                    inputImage.getWidth(), x, inputImage.getHeight(), y));
+        }
 
-        BufferedImage chipImage = inputImage.getSubimage(chipPixelRectangle.getUpperLeft().x,
-                chipPixelRectangle.getUpperLeft().y,
-                geoChipDescriptor.getWidthInPixels(),
-                geoChipDescriptor.getHeightInPixels());
+        if (x < 0) {
+            x = 0;
+        }
 
-        return chipImage;
+        if (y < 0) {
+            y = 0;
+        }
+
+        if (x + w > inputImage.getWidth()) {
+            w = inputImage.getWidth() - x;
+        }
+
+        if (y + h > inputImage.getHeight()) {
+            h = inputImage.getHeight() - y;
+        }
+
+        return inputImage.getSubimage(x, y, w, h);
+    }
+
+    private List<Vector> createVectorListFromPolygon(Polygon polygon) {
+        List<Vector> vectors = Stream.of(polygon.getCoordinates())
+                .map(v -> new BasicVector(new double[] {v.x, v.y}))
+                .collect(Collectors.toList());
+
+        return vectors;
     }
 
     private void validateNotNull(Object value, String argumentName) {
@@ -65,41 +124,5 @@ public class ChipServiceImpl implements ChipService {
             throw new IllegalArgumentException(String.format("argument '%s' may not be null.",
                     argumentName));
         }
-    }
-
-    private Rectangle<Point> getImagePixelBounds(BufferedImage image) {
-        Point upperLeft = new Point(0, 0);
-        Point bottomRight = new Point(image.getWidth(null), image.getHeight(null));
-        Rectangle<Point> rectangle = new Rectangle<>(upperLeft, bottomRight);
-        return rectangle;
-    }
-
-    private Rectangle<Coordinate> getGeoBounds(Polygon polygon) {
-        Coordinate[] coordinates = polygon.getEnvelope()
-                .getCoordinates();
-
-        double minLat = findMin(coordinates, coord -> coord.y);
-        double maxLat = findMax(coordinates, coord -> coord.y);
-        double minLon = findMin(coordinates, coord -> coord.x);
-        double maxLon = findMax(coordinates, coord -> coord.x);
-
-        Coordinate upperLeft = new Coordinate(minLon, maxLat);
-        Coordinate lowerRight = new Coordinate(maxLon, minLat);
-        Rectangle<Coordinate> geoBounds = new Rectangle<>(upperLeft, lowerRight);
-        return geoBounds;
-    }
-
-    private double findMin(Coordinate[] coordinates, ToDoubleFunction<Coordinate> mappingFunction) {
-        return Stream.of(coordinates)
-                .mapToDouble(mappingFunction)
-                .min()
-                .getAsDouble();
-    }
-
-    private double findMax(Coordinate[] coordinates, ToDoubleFunction<Coordinate> mappingFunction) {
-        return Stream.of(coordinates)
-                .mapToDouble(mappingFunction)
-                .max()
-                .getAsDouble();
     }
 }
