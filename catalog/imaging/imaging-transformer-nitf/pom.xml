@@ -17,7 +17,7 @@
     <parent>
         <artifactId>imaging</artifactId>
         <groupId>org.codice.alliance.imaging</groupId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
     <artifactId>imaging-transformer-nitf</artifactId>
     <packaging>bundle</packaging>
@@ -100,7 +100,7 @@
                             codice-imaging-nitf-render,
                             codice-imaging-nitf-fluent-api
                         </Embed-Dependency>
-                        <Export-Package/>
+                        <Export-Package />
                     </instructions>
                 </configuration>
             </plugin>

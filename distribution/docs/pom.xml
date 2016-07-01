@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.codice.alliance</groupId>
         <artifactId>distribution</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
     <artifactId>docs</artifactId>
     <name>Alliance :: Docs</name>
@@ -245,7 +245,7 @@
                                             <icons>font</icons>
                                             <sectanchors>true</sectanchors>
                                             <sectlinks>true</sectlinks>
-                                            <idprefix/>
+                                            <idprefix />
                                             <idseparator>-</idseparator>
                                             <docinfo1>true</docinfo1>
                                         </attributes>
@@ -263,9 +263,9 @@
                                         <backend>pdf</backend>
                                         <outputDirectory>${project.build.directory}/docs/pdf</outputDirectory>
                                         <attributes>
-                                            <pagenums/>
-                                            <toc/>
-                                            <idprefix/>
+                                            <pagenums />
+                                            <toc />
+                                            <idprefix />
                                             <idseparator>-</idseparator>
                                         </attributes>
                                     </configuration>
