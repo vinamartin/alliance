@@ -63,7 +63,7 @@
                     <repository>
                         <id>rubygems-proxy-releases</id>
                         <name>RubyGems.org Proxy (Release)</name>
-                        <url>http://rugems-proxy.torquebox.org/releases</url>
+                        <url>http://rubygems-proxy.torquebox.org/releases</url>
                         <releases>
                             <enabled>true</enabled>
                         </releases>
