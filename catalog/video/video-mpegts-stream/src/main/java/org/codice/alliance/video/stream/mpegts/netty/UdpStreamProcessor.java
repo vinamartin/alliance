@@ -329,6 +329,7 @@ public class UdpStreamProcessor implements StreamProcessor {
     }
 
     public void doRollover(File tempFile) {
+        LOGGER.debug("performing video chunk rollover: tempFile={}", tempFile);
         try {
             rolloverAction.doAction(tempFile);
         } catch (RolloverActionException e) {

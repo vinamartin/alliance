@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -83,6 +85,8 @@ public class PacketBuffer {
         }
     };
 
+    private final Timer timer = new Timer();
+
     private List<Frame> frames = new ArrayList<>();
 
     private List<byte[]> incompleteFrame = new ArrayList<>();
@@ -103,6 +107,14 @@ public class PacketBuffer {
 
     private OutputStreamFactory outputStreamFactory = FileOutputStream::new;
 
+    private long bytesReceived = 0;
+
+    private long packetsReceived = 0;
+
+    private long bytesWritten = 0;
+
+    private long filesWritten = 0;
+
     /**
      * Timestamp of most recent activity. Updated to current time when a packet is sent to the
      * PacketBuffer.
@@ -113,6 +125,22 @@ public class PacketBuffer {
      * By default, new Date objects are created by calling {@link Date#Date()}.
      */
     private Supplier<Date> dateSupplier = Date::new;
+
+    private static final long ACTIVIITY_LOG_PERIOD = TimeUnit.SECONDS.toMillis(10);
+
+    public PacketBuffer() {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LOGGER.debug(
+                        "packet buffer activity: bytesReceived={} packetsReceived={} bytesWritten={} filesWritten={}",
+                        bytesReceived,
+                        packetsReceived,
+                        bytesWritten,
+                        filesWritten);
+            }
+        }, 0, ACTIVIITY_LOG_PERIOD);
+    }
 
     /**
      * @param tempFileGenerator must be non-null
@@ -198,6 +226,7 @@ public class PacketBuffer {
      * @param rawPacket may be null or empty
      */
     public void write(byte[] rawPacket) {
+
         if (rawPacket == null || rawPacket.length == 0) {
             return;
         }
@@ -206,6 +235,8 @@ public class PacketBuffer {
             lastActivity = System.currentTimeMillis();
             incompleteFrame.add(rawPacket);
             incompleteFrameBytes += rawPacket.length;
+            bytesReceived += rawPacket.length;
+            packetsReceived++;
             if (incompleteFrameBytes > maxIncompleteFrameBytes) {
                 frames.add(new Frame(FrameType.UNKNOWN, incompleteFrame));
                 incompleteFrame = new ArrayList<>();
@@ -267,6 +298,7 @@ public class PacketBuffer {
             for (byte[] outgoingPacket : outgoingPackets) {
                 os.write(outgoingPacket);
                 bytesWrittenToTempFile += outgoingPacket.length;
+                bytesWritten += outgoingPacket.length;
             }
 
         }
@@ -286,6 +318,7 @@ public class PacketBuffer {
         lock.lock();
         try {
             if (isActivityTimeout()) {
+                LOGGER.debug("activity timeout detected, flushing data and rolling over file");
                 if (!incompleteFrame.isEmpty()) {
                     flushIncompleteFrames();
                 }
@@ -350,6 +383,7 @@ public class PacketBuffer {
                     .getTime();
             bytesWrittenToTempFile = 0;
             currentTempFile = tempFileGenerator.generate();
+            filesWritten++;
         }
         return currentTempFile;
     }
