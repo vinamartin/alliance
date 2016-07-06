@@ -39,22 +39,27 @@ public class LocationKlvProcessor implements KlvProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocationKlvProcessor.class);
 
-    private final GeometryFunction geometryFunction;
+    private final GeometryOperator postUnionGeometryOperator;
+
+    private final GeometryOperator preUnionGeometryOperator;
 
     public LocationKlvProcessor() {
-        this(GeometryFunction.IDENTITY);
+        this(GeometryOperator.IDENTITY, GeometryOperator.IDENTITY);
     }
 
     /**
-     * @param geometryFunction transform the final Geometry object (must be non-null)
+     * @param preUnionGeometryOperator  transform the final Geometry object (must be non-null)
+     * @param postUnionGeometryOperator transform the final Geometry object (must be non-null)
      */
-    public LocationKlvProcessor(GeometryFunction geometryFunction) {
-        notNull(geometryFunction, "geometryFunction must be non-null");
-        this.geometryFunction = geometryFunction;
+    public LocationKlvProcessor(GeometryOperator preUnionGeometryOperator, GeometryOperator postUnionGeometryOperator) {
+        notNull(preUnionGeometryOperator, "preUnionGeometryOperator must be non-null");
+        notNull(postUnionGeometryOperator, "postUnionGeometryOperator must be non-null");
+        this.preUnionGeometryOperator = preUnionGeometryOperator;
+        this.postUnionGeometryOperator = postUnionGeometryOperator;
     }
 
-    public GeometryFunction getGeometryFunction() {
-        return geometryFunction;
+    public GeometryOperator getGeometryFunction() {
+        return postUnionGeometryOperator;
     }
 
     private Optional<KlvHandler> find(Map<String, KlvHandler> handlers, String name) {
@@ -101,7 +106,8 @@ public class LocationKlvProcessor implements KlvProcessor {
         GeometryUtility.createUnionOfGeometryAttribute(wktReader,
                 wktWriter,
                 attribute,
-                geometryFunction)
+                postUnionGeometryOperator,
+                preUnionGeometryOperator)
                 .ifPresent(location -> metacard.setAttribute(new AttributeImpl(Metacard.GEOGRAPHY,
                         location)));
 
