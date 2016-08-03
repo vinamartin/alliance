@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.codice.alliance.nsili.common.CorbaUtils;
 import org.codice.alliance.nsili.common.NsiliApprovalStatus;
 import org.codice.alliance.nsili.common.NsiliClassification;
 import org.codice.alliance.nsili.common.NsiliClassificationComparator;
@@ -59,8 +60,6 @@ import org.codice.alliance.nsili.common.NsiliVideoCategoryType;
 import org.codice.alliance.nsili.common.NsiliVideoEncodingScheme;
 import org.codice.alliance.nsili.common.NsiliVideoMetacardType;
 import org.codice.alliance.nsili.common.ResultDAGConverter;
-import org.codice.alliance.nsili.common.UCO.AbsTime;
-import org.codice.alliance.nsili.common.UCO.AbsTimeHelper;
 import org.codice.alliance.nsili.common.UCO.DAG;
 import org.codice.alliance.nsili.common.UCO.Edge;
 import org.codice.alliance.nsili.common.UCO.Node;
@@ -69,14 +68,14 @@ import org.codice.alliance.nsili.common.UCO.RectangleHelper;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 import org.jgrapht.traverse.DepthFirstIterator;
-import org.joda.time.DateTime;
-import org.joda.time.IllegalFieldValueException;
 import org.omg.CORBA.Any;
 import org.omg.CORBA.TCKind;
-import org.omg.CORBA.TypeCodePackage.BadKind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.basic.NullConverter;
+import com.thoughtworks.xstream.converters.collections.ArrayConverter;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -110,6 +109,8 @@ public class DAGConverter {
     private String relatedFileType;
 
     private String relatedFileUrl;
+
+    private XStream xstream;
 
     public DAGConverter(ResourceReader resourceReader) {
         this.resourceReader = resourceReader;
@@ -305,7 +306,7 @@ public class DAGConverter {
             break;
         case NsiliConstants.DATE_TIME_MODIFIED:
             metacard.setAttribute(new AttributeImpl(NsiliMetacardType.APPROVAL_DATETIME_MODIFIED,
-                    convertDate(node.value)));
+                    CorbaUtils.convertDate(node.value)));
             break;
         case NsiliConstants.STATUS:
             metacard.setAttribute(new AttributeImpl(NsiliMetacardType.APPROVAL_STATUS,
@@ -322,11 +323,11 @@ public class DAGConverter {
             metacard.setId(getString(node.value));
             break;
         case NsiliConstants.SOURCE_DATE_TIME_MODIFIED:
-            Date cardDate = convertDate(node.value);
+            Date cardDate = CorbaUtils.convertDate(node.value);
             metacard.setCreatedDate(cardDate);
             break;
         case NsiliConstants.DATE_TIME_MODIFIED:
-            metacard.setModifiedDate(convertDate(node.value));
+            metacard.setModifiedDate(CorbaUtils.convertDate(node.value));
             break;
         case NsiliConstants.PUBLISHER:
             metacard.setAttribute(new AttributeImpl(NsiliMetacardType.PUBLISHER,
@@ -399,10 +400,10 @@ public class DAGConverter {
             break;
         case NsiliConstants.TEMPORAL_START:
             metacard.setAttribute(new AttributeImpl(NsiliMetacardType.START_DATETIME,
-                    convertDate(node.value)));
+                    CorbaUtils.convertDate(node.value)));
             break;
         case NsiliConstants.TEMPORAL_END:
-            Date temporalEnd = convertDate(node.value);
+            Date temporalEnd = CorbaUtils.convertDate(node.value);
             metacard.setAttribute(new AttributeImpl(NsiliMetacardType.END_DATETIME, temporalEnd));
             metacard.setEffectiveDate(temporalEnd);
             break;
@@ -474,7 +475,7 @@ public class DAGConverter {
             break;
         case NsiliConstants.DATE_TIME_DECLARED:
             metacard.setAttribute(new AttributeImpl(NsiliMetacardType.PRODUCT_CREATE_TIME,
-                    convertDate(node.value)));
+                    CorbaUtils.convertDate(node.value)));
             break;
         case NsiliConstants.EXTENT:
             metacard.setResourceSize(String.valueOf(convertMegabytesToBytes(node.value.extract_double())));
@@ -717,7 +718,7 @@ public class DAGConverter {
             break;
         case NsiliConstants.DATE_TIME_DECLARED:
             metacard.setAttribute(new AttributeImpl(NsiliMetacardType.STREAM_DATETIME_DECLARED,
-                    convertDate(node.value)));
+                    CorbaUtils.convertDate(node.value)));
             break;
         case NsiliConstants.STANDARD:
             metacard.setAttribute(new AttributeImpl(NsiliMetacardType.STREAM_STANDARD,
@@ -950,21 +951,6 @@ public class DAGConverter {
         if (metacard.getContentTypeName() == null) {
             metacard.setContentTypeName(NsiliProductType.DOCUMENT.toString());
         }
-    }
-
-    public static Date convertDate(Any any) {
-        AbsTime absTime = AbsTimeHelper.extract(any);
-        org.codice.alliance.nsili.common.UCO.Date ucoDate = absTime.aDate;
-        org.codice.alliance.nsili.common.UCO.Time ucoTime = absTime.aTime;
-
-        DateTime dateTime = new DateTime((int) ucoDate.year,
-                (int) ucoDate.month,
-                (int) ucoDate.day,
-                (int) ucoTime.hour,
-                (int) ucoTime.minute,
-                (int) ucoTime.second,
-                0);
-        return dateTime.toDate();
     }
 
     private NsiliProductType convertProductType(Any any) {
@@ -1433,7 +1419,7 @@ public class DAGConverter {
 
         if (node.node_type == NodeType.ATTRIBUTE_NODE) {
             if (node.value != null && node.value.type() != null) {
-                value = getNodeValue(node.value);
+                value = CorbaUtils.getNodeValue(node.value);
                 sb.append(attrName);
                 sb.append("=");
                 sb.append(value);
@@ -1444,46 +1430,25 @@ public class DAGConverter {
         LOGGER.trace(sb.toString());
     }
 
-    public static String getNodeValue(Any any) {
-        String value = null;
-        if (any.type()
-                .kind() == TCKind.tk_wstring) {
-            value = any.extract_wstring();
-        } else if (any.type()
-                .kind() == TCKind.tk_string) {
-            value = any.extract_string();
-        } else if (any.type()
-                .kind() == TCKind.tk_long) {
-            value = String.valueOf(any.extract_long());
-        } else if (any.type()
-                .kind() == TCKind.tk_ulong) {
-            value = String.valueOf(any.extract_ulong());
-        } else if (any.type()
-                .kind() == TCKind.tk_short) {
-            value = String.valueOf(any.extract_short());
-        } else if (any.type()
-                .kind() == TCKind.tk_ushort) {
-            value = String.valueOf(any.extract_ushort());
-        } else if (any.type()
-                .kind() == TCKind.tk_boolean) {
-            value = String.valueOf(any.extract_boolean());
-        } else if (any.type()
-                .kind() == TCKind.tk_double) {
-            value = String.valueOf(any.extract_double());
-        } else {
-            try {
-                if (any.type()
-                        .name()
-                        .equals(AbsTime.class.getSimpleName())) {
-                    Date date = convertDate(any);
-                    if (date != null) {
-                        value = date.toString();
-                    }
-                }
-            } catch (org.omg.CORBA.MARSHAL | IllegalFieldValueException | BadKind ignore) {
-            }
-        }
+    private String dagToXML(DAG dag) {
+        final String cleanupStr = " class=\"com.sun.corba.se.impl.corba.AnyImpl\"";
 
-        return value;
+        xstream = new XStream();
+
+        xstream.alias("dag", DAG.class);
+        xstream.alias("node", Node.class);
+
+        xstream.registerConverter(new NullConverter());
+        xstream.registerConverter(new ArrayConverter(xstream.getMapper()));
+        xstream.registerConverter(new AnyConverter());
+
+        xstream.omitField(DAG.class, "edges");
+        xstream.omitField(Node.class, "id");
+        xstream.omitField(Node.class, "node_type");
+
+        String xmlDAG = xstream.toXML(dag);
+        xmlDAG = xmlDAG.replaceAll(cleanupStr, "");
+
+        return xmlDAG;
     }
 }
