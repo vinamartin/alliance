@@ -34,6 +34,7 @@ import org.codice.alliance.video.stream.mpegts.Context;
 import org.codice.alliance.video.stream.mpegts.StreamMonitor;
 import org.codice.alliance.video.stream.mpegts.UdpStreamMonitor;
 import org.codice.alliance.video.stream.mpegts.filename.FilenameGenerator;
+import org.codice.alliance.video.stream.mpegts.metacard.CreatedDateMetacardUpdater;
 import org.codice.alliance.video.stream.mpegts.metacard.FrameCenterMetacardUpdater;
 import org.codice.alliance.video.stream.mpegts.metacard.LineStringMetacardUpdater;
 import org.codice.alliance.video.stream.mpegts.metacard.LocationMetacardUpdater;
@@ -41,6 +42,8 @@ import org.codice.alliance.video.stream.mpegts.metacard.MetacardUpdater;
 import org.codice.alliance.video.stream.mpegts.metacard.ModifiedDateMetacardUpdater;
 import org.codice.alliance.video.stream.mpegts.metacard.TemporalEndMetacardUpdater;
 import org.codice.alliance.video.stream.mpegts.metacard.TemporalStartMetacardUpdater;
+import org.codice.alliance.video.stream.mpegts.metacard.UnionMetacardUpdater;
+import org.codice.alliance.video.stream.mpegts.metacard.UnionSingleMetacardUpdater;
 import org.codice.alliance.video.stream.mpegts.plugins.StreamCreationException;
 import org.codice.alliance.video.stream.mpegts.plugins.StreamCreationPlugin;
 import org.codice.alliance.video.stream.mpegts.plugins.StreamShutdownException;
@@ -185,6 +188,21 @@ public class UdpStreamProcessor implements StreamProcessor {
 
             @Override
             public void visit(TemporalStartMetacardUpdater temporalStartMetacardUpdater) {
+
+            }
+
+            @Override
+            public void visit(UnionMetacardUpdater unionMetacardUpdater) {
+
+            }
+
+            @Override
+            public void visit(UnionSingleMetacardUpdater unionMetacardUpdater) {
+
+            }
+
+            @Override
+            public void visit(CreatedDateMetacardUpdater createdDateMetacardUpdater) {
 
             }
         });

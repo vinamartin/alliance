@@ -127,7 +127,7 @@ public class KlvHandlerFactoryImpl implements KlvHandlerFactory {
                         KlvString.class));
 
         handlers.put(Stanag4609TransportStreamParser.TARGET_WIDTH,
-                new ListOfBasicKlvDataTypesHandler<>(AttributeNameConstants.TARGET_WIDTH,
+                new ListOfBasicKlvDataTypesHandler<>(AttributeNameConstants.TARGET_WIDTH_METERS,
                         KlvIntegerEncodedFloatingPoint.class));
 
         handlers.put(Stanag4609TransportStreamParser.FRAME_CENTER_ELEVATION,
@@ -168,6 +168,18 @@ public class KlvHandlerFactoryImpl implements KlvHandlerFactory {
                 Stanag4609TransportStreamParser.SENSOR_LONGITUDE);
         handlers.put(Stanag4609TransportStreamParser.SENSOR_LONGITUDE, sensor);
         handlers.put(Stanag4609TransportStreamParser.SENSOR_LATITUDE, sensor);
+
+        handlers.put(Stanag4609TransportStreamParser.SECURITY_SCI_SHI_INFORMATION,
+                new ListOfBasicKlvDataTypesHandler<>(AttributeNameConstants.SECURITY_SCI_SHI_INFORMATION,
+                        KlvString.class));
+
+        handlers.put(Stanag4609TransportStreamParser.CAVEATS,
+                new ListOfBasicKlvDataTypesHandler<>(AttributeNameConstants.CAVEATS,
+                        KlvString.class));
+
+        handlers.put(Stanag4609TransportStreamParser.RELEASING_INSTRUCTIONS,
+                new ListOfBasicKlvDataTypesHandler<>(AttributeNameConstants.RELEASING_INSTRUCTIONS,
+                        KlvString.class));
 
         return handlers;
 

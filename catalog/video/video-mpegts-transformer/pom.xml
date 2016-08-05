@@ -67,6 +67,11 @@
             <artifactId>klv</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.codice.alliance</groupId>
+            <artifactId>mpegts</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.vividsolutions</groupId>
@@ -146,11 +151,6 @@
                                     <type>config</type>
                                     <classifier>mpegts</classifier>
                                 </artifact>
-                                <artifact>
-                                    <file>src/main/resources/mpegTsMetacardType.json</file>
-                                    <type>json</type>
-                                    <classifier>mpegts</classifier>
-                                </artifact>
                             </artifacts>
                         </configuration>
                     </execution>
@@ -173,8 +173,7 @@
                             catalog-core-api-impl,
                             commons-collections4,
                             commons-lang3,
-                            jcodec,
-                            mpegts-streamer
+                            jcodec
                         </Embed-Dependency>
                         <Export-Package>org.codice.transformer.video</Export-Package>
                     </instructions>
@@ -213,7 +212,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.91</minimum>
+                                            <minimum>0.87</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

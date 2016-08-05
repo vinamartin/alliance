@@ -21,7 +21,7 @@
            http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
 
     <reference-list id="metacardTypeList" interface="ddf.catalog.data.MetacardType"
-                    filter="(name=MpegTsMetacardType)" availability="mandatory"/>
+                    filter="(name=isr.video)" availability="mandatory"/>
 
     <reference id="catalogFramework" interface="ddf.catalog.CatalogFramework"/>
 
@@ -128,6 +128,7 @@
                             </bean>
                             <bean class="org.codice.alliance.video.stream.mpegts.metacard.TemporalStartMetacardUpdater"/>
                             <bean class="org.codice.alliance.video.stream.mpegts.metacard.TemporalEndMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.CreatedDateMetacardUpdater"/>
                             <bean class="org.codice.alliance.video.stream.mpegts.metacard.ModifiedDateMetacardUpdater"/>
                             <bean class="org.codice.alliance.video.stream.mpegts.metacard.FrameCenterMetacardUpdater">
                                 <argument>
@@ -144,6 +145,18 @@
                                     </bean>
                                 </argument>
                             </bean>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.MediaEncodingMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.MissionIdMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.PlatformIdMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.PlatformDesignationMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.ImageCoordSystemMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.ImageSourceSensorMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.SecurityClassificationMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.LocationCountryCodeMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.SecurityCodewordsMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.SecurityDisseminationControlsMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.SecurityClassificationSystemMetacardUpdater"/>
+                            <bean class="org.codice.alliance.video.stream.mpegts.metacard.SecurityReleasabilityMetacardUpdater"/>
                         </list>
                     </argument>
                 </bean>

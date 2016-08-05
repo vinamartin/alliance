@@ -20,7 +20,7 @@
                availability="mandatory"/>
 
     <reference-list id="metacardTypeList" interface="ddf.catalog.data.MetacardType"
-                    filter="(name=MpegTsMetacardType)" availability="mandatory"/>
+                    filter="(name=isr.video)" availability="mandatory"/>
 
     <bean id="simplifyAndNormalize" class="org.codice.alliance.libs.klv.GeometryOperatorList">
         <argument>
@@ -78,9 +78,9 @@
                         </bean>
                         <bean class="org.codice.alliance.libs.klv.SetDatesKlvProcessor"/>
                         <bean class="org.codice.alliance.libs.klv.MissionIdKlvProcessor"/>
+                        <bean class="org.codice.alliance.libs.klv.PlatformIdKlvProcessor"/>
                         <bean class="org.codice.alliance.libs.klv.PlatformDesignationKlvProcessor"/>
                         <bean class="org.codice.alliance.libs.klv.ImageSourceSensorKlvProcessor"/>
-                        <bean class="org.codice.alliance.libs.klv.ObjectCountryCodesKlvProcessor"/>
                         <bean class="org.codice.alliance.libs.klv.SecurityClassificationKlvProcessor"/>
                         <bean class="org.codice.alliance.libs.klv.FrameCenterKlvProcessor">
                             <argument>
@@ -97,7 +97,13 @@
                                 </bean>
                             </argument>
                         </bean>
+                        <bean class="org.codice.alliance.libs.klv.ImageCoordSystemKlvProcessor"/>
                         <bean class="org.codice.alliance.libs.klv.ClassifyingCountryKlvProcessor"/>
+                        <bean class="org.codice.alliance.libs.klv.SecurityInformationKlvProcessor"/>
+                        <bean class="org.codice.alliance.libs.klv.SecurityCaveatsKlvProcessor"/>
+                        <bean class="org.codice.alliance.libs.klv.SecurityReleasingInstructionsKlvProcessor"/>
+                        <bean class="org.codice.alliance.libs.klv.ObjectCountryCodesKlvProcessor"/>
+                        <bean class="org.codice.alliance.libs.klv.SensorAltitudeKlvProcessor"/>
                     </list>
                 </argument>
             </bean>

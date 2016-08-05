@@ -13,26 +13,34 @@
  */
 package org.codice.alliance.libs.klv;
 
-import ddf.catalog.data.Metacard;
+import org.codice.alliance.catalog.core.api.types.Isr;
+import org.codice.alliance.catalog.core.api.types.Security;
+
+import ddf.catalog.data.types.Core;
+import ddf.catalog.data.types.DateTime;
+import ddf.catalog.data.types.Location;
+import ddf.catalog.data.types.Media;
 
 /**
  * All classes with this klv library should use these constants for metacard attribute names, even
- * for names already defined in {@link Metacard} so that all attribute names used by the library
+ * for names already defined in Metacard so that all attribute names used by the library
  * are in a central location.
  */
 public class AttributeNameConstants {
 
-    public static final String TEMPORAL_START = "temporal.start";
+    public static final String TEMPORAL_START = DateTime.START;
 
-    public static final String TEMPORAL_END = "temporal.end";
+    public static final String TEMPORAL_END = DateTime.END;
 
-    public static final String CREATED = Metacard.CREATED;
+    public static final String CREATED = Core.CREATED;
 
-    public static final String MISSION_ID = "mission-id";
+    public static final String GEOGRAPHY = Core.LOCATION;
 
-    public static final String PLATFORM_TAIL_NUMBER = "platform-tail-number";
+    public static final String MISSION_ID = Isr.MISSION_ID;
 
-    public static final String PLATFORM_DESIGNATION = "platform-designation";
+    public static final String PLATFORM_TAIL_NUMBER = Isr.PLATFORM_ID;
+
+    public static final String PLATFORM_DESIGNATION = Isr.PLATFORM_NAME;
 
     public static final String OFFSET_CORNER = "offset-corner-location";
 
@@ -46,28 +54,28 @@ public class AttributeNameConstants {
 
     public static final String CORNER = "corner-location";
 
-    public static final String SECURITY_CLASSIFICATION = "security-classification";
+    public static final String SECURITY_CLASSIFICATION = Security.CLASSIFICATION;
 
     public static final String CLASSIFYING_COUNTRY_CODING_METHOD =
             "classifying-country-coding-method";
 
-    public static final String CLASSIFYING_COUNTRY = "classifying-country";
+    public static final String CLASSIFYING_COUNTRY = Security.CLASSIFICATION_SYSTEM;
 
     public static final String OBJECT_COUNTRY_CODING_METHOD = "object-country-coding-method";
 
-    public static final String OBJECT_COUNTRY_CODES = "object-country-codes";
+    public static final String OBJECT_COUNTRY_CODES = Location.COUNTRY_CODE;
 
-    public static final String CHECKSUM = "checksum";
+    public static final String CHECKSUM = "klv-packet-checksum";
 
-    public static final String IMAGE_COORDINATE_SYSTEM = "image-coordinate-system";
+    public static final String IMAGE_COORDINATE_SYSTEM = Location.COORDINATE_REFERENCE_SYSTEM_NAME;
 
-    public static final String IMAGE_SOURCE_SENSOR = "image-source-sensor";
+    public static final String IMAGE_SOURCE_SENSOR = Isr.SENSOR_ID;
 
-    public static final String TARGET_WIDTH = "target-width";
+    public static final String TARGET_WIDTH_METERS = "target-width-meters";
 
     public static final String FRAME_CENTER_ELEVATION = "frame-center-elevation";
 
-    public static final String SENSOR_TRUE_ALTITUDE = "sensor-true-altitude";
+    public static final String SENSOR_TRUE_ALTITUDE = Location.ALTITUDE;
 
     public static final String GROUND_RANGE = "ground-range";
 
@@ -75,10 +83,18 @@ public class AttributeNameConstants {
 
     public static final String TARGET_LOCATION_ELEVATION = "target-location-elevation";
 
-    public static final String FRAME_CENTER = "frame-center-location";
+    public static final String FRAME_CENTER = Media.FRAME_CENTER;
 
     public static final String TARGET_LOCATION = "target-location";
 
     public static final String SENSOR = "sensor";
+
+    public static final String MEDIA_ENCODING = Media.ENCODING;
+
+    public static final String SECURITY_SCI_SHI_INFORMATION = Security.CODEWORDS;
+
+    public static final String CAVEATS = Security.DISSEMINATION_CONTROLS;
+
+    public static final String RELEASING_INSTRUCTIONS = Security.RELEASABILITY;
 
 }

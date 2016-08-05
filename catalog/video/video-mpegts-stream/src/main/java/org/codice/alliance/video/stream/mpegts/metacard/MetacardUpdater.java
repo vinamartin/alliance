@@ -34,6 +34,12 @@ public interface MetacardUpdater {
         void visit(TemporalEndMetacardUpdater temporalEndMetacardUpdater);
 
         void visit(TemporalStartMetacardUpdater temporalStartMetacardUpdater);
+
+        void visit(UnionMetacardUpdater unionMetacardUpdater);
+
+        void visit(UnionSingleMetacardUpdater unionMetacardUpdater);
+
+        void visit(CreatedDateMetacardUpdater createdDateMetacardUpdater);
     }
 
 }

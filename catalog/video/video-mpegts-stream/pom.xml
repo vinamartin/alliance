@@ -94,14 +94,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.taktik</groupId>
-            <artifactId>mpegts-streamer</artifactId>
-            <version>0.1.0_1</version>
+            <groupId>org.codice.alliance</groupId>
+            <artifactId>stanag4609</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.codice.alliance</groupId>
-            <artifactId>stanag4609</artifactId>
+            <artifactId>mpegts</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -163,7 +163,6 @@
                             netty-all,
                             barchart-udt-bundle,
                             jcodec,
-                            mpegts-streamer,
                             catalog-core-api-impl,
                             platform-util,
                             ddf-security-common,
@@ -215,22 +214,22 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.74</minimum>
+                                            <minimum>0.70</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.65</minimum>
+                                            <minimum>0.60</minimum>
                                         </limit>
                                         <limit>
                                             <counter>COMPLEXITY</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.68</minimum>
+                                            <minimum>0.61</minimum>
                                         </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.76</minimum>
+                                            <minimum>0.70</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

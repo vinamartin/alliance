@@ -31,6 +31,8 @@ public interface KlvProcessor {
 
         void visit(DistinctKlvProcessor distinctKlvProcessor);
 
+        void visit(DistinctSingleKlvProcessor distinctSingleKlvProcessor);
+
         void visit(CopyPresentKlvProcessor copyPresentKlvProcessor);
 
         void visit(FrameCenterKlvProcessor frameCenterKlvProcessor);
@@ -38,6 +40,13 @@ public interface KlvProcessor {
         void visit(LocationKlvProcessor locationKlvProcessor);
 
         void visit(SetDatesKlvProcessor setDatesKlvProcessor);
+
+        void visit(ClassifyingCountryKlvProcessor classifyingCountryKlvProcessor);
+
+        void visit(UnionKlvProcessor abstractUnionKlvProcessor);
+
+        void visit(SensorAltitudeKlvProcessor sensorAltitudeKlvProcessor);
+
     }
 
     class Configuration {

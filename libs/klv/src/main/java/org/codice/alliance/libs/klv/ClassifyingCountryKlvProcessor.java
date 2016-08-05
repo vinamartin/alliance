@@ -20,4 +20,9 @@ public class ClassifyingCountryKlvProcessor extends DistinctKlvProcessor {
         super(AttributeNameConstants.CLASSIFYING_COUNTRY,
                 Stanag4609TransportStreamParser.CLASSIFYING_COUNTRY);
     }
+
+    @Override
+    public String toString() {
+        return "ClassifyingCountryKlvProcessor{}";
+    }
 }

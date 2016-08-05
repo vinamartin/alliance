@@ -15,7 +15,7 @@ package org.codice.alliance.libs.klv;
 
 import org.codice.alliance.libs.stanag4609.Stanag4609TransportStreamParser;
 
-public class PlatformDesignationKlvProcessor extends DistinctKlvProcessor {
+public class PlatformDesignationKlvProcessor extends DistinctSingleKlvProcessor {
     public PlatformDesignationKlvProcessor() {
         super(AttributeNameConstants.PLATFORM_DESIGNATION,
                 Stanag4609TransportStreamParser.PLATFORM_DESIGNATION);
