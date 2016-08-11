@@ -71,6 +71,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.codice.alliance.video</groupId>
+            <artifactId>video-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.codice.ddf</groupId>
             <artifactId>mpeg-transport-stream</artifactId>
             <version>${ddf.version}</version>
