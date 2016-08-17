@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import javax.activation.MimeTypeParseException;
 import javax.imageio.ImageIO;
+import javax.imageio.spi.IIORegistry;
 
 import org.apache.commons.io.FilenameUtils;
 import org.codice.alliance.transformer.nitf.MetacardFactory;
@@ -32,6 +33,7 @@ import org.codice.imaging.nitf.render.NitfRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.jaiimageio.jpeg2000.impl.J2KImageReaderSpi;
 import com.google.common.io.ByteSource;
 
 import ddf.catalog.content.data.ContentItem;
@@ -42,6 +44,7 @@ import ddf.catalog.content.plugin.PreCreateStoragePlugin;
 import ddf.catalog.content.plugin.PreUpdateStoragePlugin;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.AttributeImpl;
+import ddf.catalog.data.types.Core;
 import ddf.catalog.plugin.PluginExecutionException;
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -64,6 +67,11 @@ public class NitfPreStoragePlugin implements PreCreateStoragePlugin, PreUpdateSt
     private static final String OVERVIEW = "overview";
 
     private static final String OVERVIEW_FILENAME_PATTERN = "%s-%s.%s";
+
+    static {
+        IIORegistry.getDefaultInstance()
+                .registerServiceProvider(new J2KImageReaderSpi());
+    }
 
     @Override
     public CreateStorageRequest process(CreateStorageRequest createStorageRequest)
@@ -165,7 +173,7 @@ public class NitfPreStoragePlugin implements PreCreateStoragePlugin, PreUpdateSt
             byte[] thumbnailImage = scaleImage(bufferedImage, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
 
             if (thumbnailImage.length > 0) {
-                metacard.setAttribute(new AttributeImpl(Metacard.THUMBNAIL, thumbnailImage));
+                metacard.setAttribute(new AttributeImpl(Core.THUMBNAIL, thumbnailImage));
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
@@ -184,7 +192,7 @@ public class NitfPreStoragePlugin implements PreCreateStoragePlugin, PreUpdateSt
                     overviewBytes.length,
                     metacard);
 
-            metacard.setAttribute(new AttributeImpl(Metacard.DERIVED_RESOURCE_URI,
+            metacard.setAttribute(new AttributeImpl(Core.DERIVED_RESOURCE_URI,
                     contentItem.getUri()));
 
             return contentItem;

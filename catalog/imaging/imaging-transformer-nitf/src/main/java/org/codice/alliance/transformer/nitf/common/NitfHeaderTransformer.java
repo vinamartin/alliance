@@ -14,20 +14,18 @@
 package org.codice.alliance.transformer.nitf.common;
 
 import java.io.IOException;
-import java.util.Date;
 
 import org.codice.imaging.nitf.core.header.NitfHeader;
 import org.codice.imaging.nitf.fluent.NitfSegmentsFlow;
 
 import ddf.catalog.data.Metacard;
-import ddf.catalog.data.impl.AttributeImpl;
 
 public class NitfHeaderTransformer extends SegmentHandler {
 
     private static final String NULL_ARGUMENT_MESSAGE = "Cannot transform null input.";
 
     public NitfSegmentsFlow transform(NitfSegmentsFlow nitfSegmentsFlow, Metacard metacard)
-            throws IOException {
+        throws IOException {
         if (nitfSegmentsFlow == null) {
             throw new IllegalArgumentException(NULL_ARGUMENT_MESSAGE);
         }
@@ -37,13 +35,6 @@ public class NitfHeaderTransformer extends SegmentHandler {
     }
 
     private void handleNitfHeader(Metacard metacard, NitfHeader header) {
-        Date date = (Date) NitfHeaderAttribute.FILE_DATE_AND_TIME.getAccessorFunction()
-                .apply(header);
-
-        metacard.setAttribute(new AttributeImpl(Metacard.TITLE, header.getFileTitle()));
-        metacard.setAttribute(new AttributeImpl(Metacard.MODIFIED, date));
-        metacard.setAttribute(new AttributeImpl(Metacard.CREATED, date));
-        metacard.setAttribute(new AttributeImpl(Metacard.EFFECTIVE, date));
         handleSegmentHeader(metacard, header, NitfHeaderAttribute.values());
     }
 }

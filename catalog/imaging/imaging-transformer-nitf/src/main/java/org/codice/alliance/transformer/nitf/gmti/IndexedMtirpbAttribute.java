@@ -20,33 +20,15 @@ import org.codice.alliance.transformer.nitf.common.NitfAttribute;
 import org.codice.imaging.nitf.core.tre.TreGroup;
 
 import ddf.catalog.data.AttributeDescriptor;
-import ddf.catalog.data.impl.AttributeDescriptorImpl;
-import ddf.catalog.data.impl.BasicTypes;
+import ddf.catalog.data.MetacardType;
+import ddf.catalog.data.impl.types.CoreAttributes;
+import ddf.catalog.data.types.Core;
 
 enum IndexedMtirpbAttribute implements NitfAttribute<TreGroup> {
-    INDEXED_TARGET_CLASSIFICATION_CATEGORY("targetClassificationCategory",
-            "TGT_CAT",
-            tre -> getClassificationCategory(tre)),
-    INDEXED_TARGET_AMPLITUDE("targetAmplitude",
-            "TGT_AMPLITUDE",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_AMPLITUDE")),
-    INDEXED_TARGET_HEADING("targetHeading",
-            "TGT_HEADING",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_HEADING")),
-    INDEXED_TARGET_GROUND_SPEED("targetGroundSpeed",
-            "TGT_SPEED",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_SPEED")),
-    INDEXED_TARGET_RADIAL_VELOCITY("targetRadialVelocity",
-            "TGT_VEL_R",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_VEL_R")),
-    INDEXED_TARGET_LOCATION_ACCURACY("targetLocationAccuracy",
-            "TGT_LOC_ACCY",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_LOC_ACCY")),
-    INDEXED_TARGET_LOCATION("targetLocation",
+    INDEXED_TARGET_LOCATION(Core.LOCATION,
             "TGT_LOC",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_LOC"));
-
-    private static final String ATTRIBUTEAME_PREFIX = "nitf.mtirpb.";
+            tre -> GmtiTreUtility.getTreValue(tre, "TGT_LOC"),
+            new CoreAttributes());
 
     private String shortName;
 
@@ -56,17 +38,15 @@ enum IndexedMtirpbAttribute implements NitfAttribute<TreGroup> {
 
     private AttributeDescriptor attributeDescriptor;
 
-    IndexedMtirpbAttribute(String longName, String shortName,
-            Function<TreGroup, Serializable> accessorFunction) {
+    IndexedMtirpbAttribute(String longName,
+                           String shortName,
+                           Function<TreGroup, Serializable> accessorFunction,
+                           MetacardType metacardType) {
         this.longName = longName;
         this.shortName = shortName;
         this.accessorFunction = accessorFunction;
-        this.attributeDescriptor = new AttributeDescriptorImpl(ATTRIBUTEAME_PREFIX + longName,
-                true,
-                true,
-                false,
-                true,
-                BasicTypes.STRING_TYPE);
+        // retrieving metacard attribute descriptor for this attribute to prevent later lookups
+        this.attributeDescriptor = metacardType.getAttributeDescriptor(longName);
     }
 
     @Override
@@ -87,17 +67,5 @@ enum IndexedMtirpbAttribute implements NitfAttribute<TreGroup> {
     @Override
     public AttributeDescriptor getAttributeDescriptor() {
         return this.attributeDescriptor;
-    }
-
-    private static String getClassificationCategory(TreGroup treGroup) {
-        Serializable value = GmtiTreUtility.getTreValue(treGroup,
-                INDEXED_TARGET_CLASSIFICATION_CATEGORY.getShortName());
-
-        if (value == null) {
-            return MtiTargetClassificationCategory.U.getLongName();
-        }
-
-        return MtiTargetClassificationCategory.valueOf((String) value)
-                .getLongName();
     }
 }
