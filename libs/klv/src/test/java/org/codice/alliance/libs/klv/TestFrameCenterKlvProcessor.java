@@ -38,7 +38,6 @@ import com.vividsolutions.jts.io.WKTWriter;
 import ddf.catalog.data.Attribute;
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.MetacardImpl;
-import ddf.catalog.data.types.Media;
 
 public class TestFrameCenterKlvProcessor {
 
@@ -82,7 +81,7 @@ public class TestFrameCenterKlvProcessor {
 
         frameCenterKlvProcessor.process(handlerMap, metacard, configuration);
 
-        assertThat(metacard.getAttribute(Media.FRAME_CENTER)
+        assertThat(metacard.getAttribute(AttributeNameConstants.FRAME_CENTER)
                 .getValue(), is(normalize(frameCenterWkt)));
     }
 
