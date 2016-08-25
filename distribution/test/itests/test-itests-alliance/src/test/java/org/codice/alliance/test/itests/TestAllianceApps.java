@@ -11,7 +11,7 @@
  * is distributed along with this program and can be found at
  * <http://www.gnu.org/licenses/lgpl.html>.
  */
-package alliance.test.itests;
+package org.codice.alliance.test.itests;
 
 import static org.codice.ddf.admin.application.service.ApplicationStatus.ApplicationState.ACTIVE;
 import static org.codice.ddf.admin.application.service.ApplicationStatus.ApplicationState.INACTIVE;
@@ -52,7 +52,7 @@ import ddf.test.itests.AbstractIntegrationTest;
 public class TestAllianceApps extends AbstractIntegrationTest {
 
     private static final String[] APPS =
-            {"security-app", "nsili-app", "imaging-app", "video-app"};
+            {"security-app", "nsili-app", "imaging-app", "video-app", "alliance-app"};
 
     @Override
     protected Option[] configureDistribution() {

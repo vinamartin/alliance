@@ -11,29 +11,13 @@
  * is distributed along with this program and can be found at
  * <http://www.gnu.org/licenses/lgpl.html>.
  */
-package alliance.test.itests;
+package org.codice.alliance.test.itests.mock.mgmp;
 
-import org.codice.alliance.nsili.mockserver.server.MockNsili;
+import ddf.common.test.mock.csw.FederatedCswMockServer;
 
-public class MockNsiliRunnable implements Runnable {
+public class FederatedMgmpMockServer extends FederatedCswMockServer {
 
-    private int httpWebPort;
-
-    private int ftpWebPort;
-
-    private int corbaPort;
-
-    public MockNsiliRunnable(int httpWebPort, int ftpWebPort, int corbaPort) {
-        this.httpWebPort = httpWebPort;
-        this.ftpWebPort = ftpWebPort;
-        this.corbaPort = corbaPort;
-    }
-
-    @Override
-    public void run() {
-        MockNsili mockNsili = MockNsili.getInstance();
-        mockNsili.startWebServer(this.httpWebPort);
-        mockNsili.startFtpWebServer(this.ftpWebPort);
-        mockNsili.startMockServer(this.corbaPort);
+    public FederatedMgmpMockServer(String sourceId, String httpRoot, int port) {
+        super(sourceId, httpRoot, port);
     }
 }
