@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.function.Function;
 
 import org.codice.alliance.transformer.nitf.common.NitfAttribute;
+import org.codice.alliance.transformer.nitf.common.TreUtility;
 import org.codice.imaging.nitf.core.tre.TreGroup;
 
 import ddf.catalog.data.AttributeDescriptor;
@@ -29,22 +30,22 @@ enum IndexedMtirpbAttribute implements NitfAttribute<TreGroup> {
             tre -> getClassificationCategory(tre)),
     INDEXED_TARGET_AMPLITUDE("targetAmplitude",
             "TGT_AMPLITUDE",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_AMPLITUDE")),
+            tre -> TreUtility.getTreValue(tre, "TGT_AMPLITUDE")),
     INDEXED_TARGET_HEADING("targetHeading",
             "TGT_HEADING",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_HEADING")),
+            tre -> TreUtility.getTreValue(tre, "TGT_HEADING")),
     INDEXED_TARGET_GROUND_SPEED("targetGroundSpeed",
             "TGT_SPEED",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_SPEED")),
+            tre -> TreUtility.getTreValue(tre, "TGT_SPEED")),
     INDEXED_TARGET_RADIAL_VELOCITY("targetRadialVelocity",
             "TGT_VEL_R",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_VEL_R")),
+            tre -> TreUtility.getTreValue(tre, "TGT_VEL_R")),
     INDEXED_TARGET_LOCATION_ACCURACY("targetLocationAccuracy",
             "TGT_LOC_ACCY",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_LOC_ACCY")),
+            tre -> TreUtility.getTreValue(tre, "TGT_LOC_ACCY")),
     INDEXED_TARGET_LOCATION("targetLocation",
             "TGT_LOC",
-            tre -> GmtiTreUtility.getTreValue(tre, "TGT_LOC"));
+            tre -> TreUtility.getTreValue(tre, "TGT_LOC"));
 
     private static final String ATTRIBUTEAME_PREFIX = "nitf.mtirpb.";
 
@@ -90,7 +91,7 @@ enum IndexedMtirpbAttribute implements NitfAttribute<TreGroup> {
     }
 
     private static String getClassificationCategory(TreGroup treGroup) {
-        Serializable value = GmtiTreUtility.getTreValue(treGroup,
+        Serializable value = TreUtility.getTreValue(treGroup,
                 INDEXED_TARGET_CLASSIFICATION_CATEGORY.getShortName());
 
         if (value == null) {

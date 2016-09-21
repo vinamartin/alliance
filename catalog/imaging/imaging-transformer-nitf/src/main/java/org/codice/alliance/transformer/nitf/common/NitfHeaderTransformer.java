@@ -45,5 +45,6 @@ public class NitfHeaderTransformer extends SegmentHandler {
         metacard.setAttribute(new AttributeImpl(Metacard.CREATED, date));
         metacard.setAttribute(new AttributeImpl(Metacard.EFFECTIVE, date));
         handleSegmentHeader(metacard, header, NitfHeaderAttribute.values());
+        handleTres(metacard, header);
     }
 }

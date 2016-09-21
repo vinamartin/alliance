@@ -29,8 +29,8 @@
 
     <bean id="gmtiMetacardType" class="org.codice.alliance.transformer.nitf.gmti.GmtiMetacardType"/>
 
-    <bean id="wktReader"
-          class="com.vividsolutions.jts.io.WKTReader"/>
+    <bean id="geometryFactory"
+          class="com.vividsolutions.jts.geom.GeometryFactory"/>
 
     <bean id="gmtiMetacardFactory" class="org.codice.alliance.transformer.nitf.MetacardFactory">
         <property name="metacardType" ref="gmtiMetacardType"/>
@@ -46,7 +46,7 @@
 
     <bean id="nitfGmtiTransformer"
           class="org.codice.alliance.transformer.nitf.gmti.NitfGmtiTransformer">
-        <property name="wktReader" ref="wktReader"/>
+        <property name="geometryFactory" ref="geometryFactory"/>
     </bean>
 
     <bean id="routingSlip" class="org.codice.alliance.transformer.nitf.RoutingSlip"/>

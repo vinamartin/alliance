@@ -17,10 +17,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.codice.alliance.transformer.nitf.common.SegmentHandler;
 import org.codice.imaging.nitf.core.image.ImageCoordinates;
 import org.codice.imaging.nitf.core.image.ImageCoordinatesRepresentation;
 import org.codice.imaging.nitf.core.image.ImageSegment;
+
 import org.codice.imaging.nitf.fluent.NitfSegmentsFlow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,6 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.AttributeImpl;
-import ddf.catalog.transform.CatalogTransformerException;
 
 /**
  * Converts NITF images into a Metacard.
@@ -47,7 +48,7 @@ public class NitfImageTransformer extends SegmentHandler {
             PrecisionModel.FLOATING), 4326);
 
     public Metacard transform(NitfSegmentsFlow nitfSegmentsFlow, Metacard metacard)
-            throws IOException, CatalogTransformerException {
+            throws IOException {
 
         validateArgument(nitfSegmentsFlow, "nitfSegmentsFlow");
         validateArgument(metacard, "metacard");
@@ -56,8 +57,7 @@ public class NitfImageTransformer extends SegmentHandler {
         return metacard;
     }
 
-    private void handleSegments(NitfSegmentsFlow nitfSegmentsFlow, Metacard metacard)
-            throws CatalogTransformerException {
+    private void handleSegments(NitfSegmentsFlow nitfSegmentsFlow, Metacard metacard) {
         validateArgument(nitfSegmentsFlow, "nitfSegmentsFlow");
         validateArgument(metacard, "metacard");
 
@@ -97,17 +97,59 @@ public class NitfImageTransformer extends SegmentHandler {
 
         handleSegmentHeader(metacard, imagesegmentHeader, ImageAttribute.values());
 
-        // handle geometry
-        if ((imagesegmentHeader.getImageCoordinatesRepresentation()
-                == ImageCoordinatesRepresentation.GEOGRAPHIC) || (
-                imagesegmentHeader.getImageCoordinatesRepresentation()
-                        == ImageCoordinatesRepresentation.DECIMALDEGREES)) {
-            polygons.add(getPolygonForSegment(imagesegmentHeader, GEOMETRY_FACTORY));
-        } else if (imagesegmentHeader.getImageCoordinatesRepresentation()
-                != ImageCoordinatesRepresentation.NONE) {
-            LOGGER.warn("Unsupported representation: {}. The NITF will be ingested, but image"
-                            + " coordinates will not be available.",
-                    imagesegmentHeader.getImageCoordinatesRepresentation());
+        // custom handling of image header fields
+        handleGeometry(metacard, imagesegmentHeader, polygons);
+//        handleMissionIdentifier(metacard, imagesegmentHeader.getImageIdentifier2());
+//        handleComments(metacard, imagesegmentHeader.getImageComments());
+        handleTres(metacard, imagesegmentHeader);
+    }
+
+    protected void handleGeometry(Metacard metacard, ImageSegment imageSegmentHeader,
+            List<Polygon> polygons) {
+        ImageCoordinatesRepresentation imageCoordinatesRepresentation =
+                imageSegmentHeader.getImageCoordinatesRepresentation();
+
+        if (imageCoordinatesRepresentation == ImageCoordinatesRepresentation.GEOGRAPHIC
+                || imageCoordinatesRepresentation
+                == ImageCoordinatesRepresentation.DECIMALDEGREES) {
+            polygons.add(getPolygonForSegment(imageSegmentHeader, GEOMETRY_FACTORY));
+
+        } else if (imageCoordinatesRepresentation != ImageCoordinatesRepresentation.NONE) {
+            LOGGER.debug("Unsupported representation: {}. The NITF will be ingested, but image"
+                    + " coordinates will not be available.", imageCoordinatesRepresentation);
+        }
+    }
+
+    /*
+     * Extracts the mission identifier from the image segment IID2 field
+     */
+    protected void handleMissionIdentifier(Metacard metacard, String imageIdentifier2) {
+        final int startIndex = 7; // inclusive
+        final int endIndex = 11; // exclusive
+
+        if (StringUtils.isNotBlank(imageIdentifier2) && imageIdentifier2.length() > endIndex) {
+            String missionId = imageIdentifier2.substring(startIndex, endIndex);
+// TODO - remove?
+//            LOGGER.debug("Setting the metacard attribute [{}, {}]", Isr.MISSION_ID, missionId);
+//            metacard.setAttribute(new AttributeImpl(Isr.MISSION_ID, missionId));
+        }
+    }
+
+    /*
+     * Appends the ICOMn fields together to form a single block comment
+     */
+    protected void handleComments(Metacard metacard, List<String> comments) {
+        if (comments.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            comments.stream()
+                    .forEach(comment -> {
+                        if (StringUtils.isNotBlank(comment)) {
+                            sb.append(comment); // no delimiter
+                        }
+                    });
+// TODO - remove?
+//            LOGGER.debug("Setting the metacard attribute [{}, {}]", Isr.COMMENTS, sb.toString());
+//            metacard.setAttribute(new AttributeImpl(Isr.COMMENTS, sb.toString()));
         }
     }
 

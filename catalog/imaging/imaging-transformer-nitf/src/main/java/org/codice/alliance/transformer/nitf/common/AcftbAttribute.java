@@ -11,52 +11,51 @@
  * is distributed along with this program and can be found at
  * <http://www.gnu.org/licenses/lgpl.html>.
  */
-package org.codice.alliance.transformer.nitf.gmti;
+package org.codice.alliance.transformer.nitf.common;
 
 import java.io.Serializable;
 import java.util.function.Function;
 
-import org.codice.alliance.transformer.nitf.common.NitfAttribute;
 import org.codice.imaging.nitf.core.tre.Tre;
 
 import ddf.catalog.data.AttributeDescriptor;
 import ddf.catalog.data.impl.AttributeDescriptorImpl;
 import ddf.catalog.data.impl.BasicTypes;
 
-enum AcftbAttribute implements NitfAttribute<Tre> {
+public enum AcftbAttribute implements NitfAttribute<Tre> {
     AIRCRAFT_MISSION_ID("aircraftMissionId",
             "AC_MSN_ID",
-            tre -> GmtiTreUtility.getTreValue(tre, "AC_MSN_ID")),
+            tre -> TreUtility.getTreValue(tre, "AC_MSN_ID")),
 
     AIRCRAFT_TAIL_NUMBER("aircraftTailNumber",
             "AC_TAIL_NO",
-            tre -> GmtiTreUtility.getTreValue(tre, "AC_TAIL_NO")),
+            tre -> TreUtility.getTreValue(tre, "AC_TAIL_NO")),
 
-    AIRCRAFT_TAKEOFF("aircraftTakeOff", "AC_TO", tre -> GmtiTreUtility.getTreValue(tre, "AC_TO")),
+    AIRCRAFT_TAKEOFF("aircraftTakeOff", "AC_TO", tre -> TreUtility.getTreValue(tre, "AC_TO")),
 
     SENSOR_ID_TYPE("sensorIdType",
             "SENSOR_ID_TYPE",
-            tre -> GmtiTreUtility.getTreValue(tre, "SENSOR_ID_TYPE")),
+            tre -> TreUtility.getTreValue(tre, "SENSOR_ID_TYPE")),
 
-    SENSOR_ID("sensorId", "SENSOR_ID", tre -> GmtiTreUtility.getTreValue(tre, "SENSOR_ID")),
+    SENSOR_ID("sensorId", "SENSOR_ID", tre -> TreUtility.getTreValue(tre, "SENSOR_ID")),
 
     SCENE_SOURCE("sceneSource",
             "SCENE_SOURCE",
-            tre -> GmtiTreUtility.getTreValue(tre, "SCENE_SOURCE")),
+            tre -> TreUtility.getTreValue(tre, "SCENE_SOURCE")),
 
-    SCENE_NUMBER("sceneNumber", "SCNUM", tre -> GmtiTreUtility.getTreValue(tre, "SCNUM")),
+    SCENE_NUMBER("sceneNumber", "SCNUM", tre -> TreUtility.getTreValue(tre, "SCNUM")),
 
-    PROCESSING_DATE("processingDate", "PDATE", tre -> GmtiTreUtility.getTreValue(tre, "PDATE")),
+    PROCESSING_DATE("processingDate", "PDATE", tre -> TreUtility.getTreValue(tre, "PDATE")),
 
     IMMEDIATE_SCENE_HOST("immediateSceneHost",
             "IMHOSTNO",
-            tre -> GmtiTreUtility.getTreValue(tre, "IMHOSTNO")),
+            tre -> TreUtility.getTreValue(tre, "IMHOSTNO")),
 
     IMMEDIATE_SCENE_REQUEST_ID("immediateSceneRequestId",
             "IMREQID",
-            tre -> GmtiTreUtility.getTreValue(tre, "IMREQID")),
+            tre -> TreUtility.getTreValue(tre, "IMREQID")),
 
-    MISSION_PLAN_MODE("missionPlanMode", "MPLAN", tre -> GmtiTreUtility.getTreValue(tre, "MPLAN"));
+    MISSION_PLAN_MODE("missionPlanMode", "MPLAN", tre -> TreUtility.getTreValue(tre, "MPLAN"));
 
     private static final String ATTRIBUTE_NAME_PREFIX = "nitf.acftb.";
 

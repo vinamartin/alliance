@@ -40,7 +40,7 @@ import org.codice.imaging.nitf.fluent.NitfSegmentsFlow;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 import ddf.catalog.data.Metacard;
 import ddf.catalog.data.impl.MetacardImpl;
@@ -61,7 +61,7 @@ public class TestNitfGmtiTransformer {
         this.metacardFactory.setMetacardType(new GmtiMetacardType());
         this.nitfHeaderTransformer = new NitfHeaderTransformer();
         this.nitfGmtiTransformer = new NitfGmtiTransformer();
-        this.nitfGmtiTransformer.setWktReader(new WKTReader());
+        this.nitfGmtiTransformer.setGeometryFactory(new GeometryFactory());
 
         TreTestUtility.createFileIfNecessary(GMTI_TEST_NITF, TreTestUtility::createNitfNoImageTres);
     }
