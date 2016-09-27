@@ -37,12 +37,12 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <ddf.version>2.9.3-SNAPSHOT</ddf.version>
         <ddf.support.version>2.3.6</ddf.support.version>
-        <ddf.scm.connection.url />
-        <snapshots.repository.url />
-        <reports.repository.url />
-        <releases.repository.url />
-        <cxf.version>3.1.4</cxf.version>
-        <karaf.version>4.0.4</karaf.version>
+        <ddf.scm.connection.url/>
+        <snapshots.repository.url/>
+        <reports.repository.url/>
+        <releases.repository.url/>
+        <cxf.version>3.1.7</cxf.version>
+        <karaf.version>4.0.7</karaf.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-io.version>2.1</commons-io.version>
         <guava.version>18.0</guava.version>
