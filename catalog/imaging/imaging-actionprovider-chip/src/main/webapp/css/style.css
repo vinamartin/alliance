@@ -9,17 +9,76 @@
  * <http://www.gnu.org/licenses/lgpl.html>.
  *
  **/
-.chipping-pane {
-    color:white;
-    background-image:linear-gradient(to bottom,#252525,#252525);
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  color: #ffffff;
+  background: #28282c;
+}
+body {
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+a,
+button {
+  border: none;
+  outline: none;
+  background: none;
+  padding: 0px;
+  border-radius: 1px;
+}
+.btn {
+    width: 49%;
+}
+.btn:hover {
+    color: white;
 }
 
-.chip-image {
-    background-color:#2a9fd6;
-    color:white;
+/* Download Button */
+a.is-primary {
+  color: white;
+  background: #3c6dd5;
+  font-size: 2rem;
+  padding: 0px;
+  line-height: 44px;
+  height: 44px;
+}
+a.is-primary:hover {
+  background: #3662c0;
+  box-shadow: 0px 0px 2px #2d52a0;
+}
+a.is-primary:focus {
+  background: #2d52a0;
+  border: 2px solid #1e376b;
+}
+a.is-primary.is-disabled,
+a.is-primary:disabled {
+  background: #9eb6ea;
+  cursor: not-allowed;
 }
 
-.reset {
-    background-color:#575757;
-    color:white;
+/* Reset Button */
+button.is-neutral {
+  color: #ffffff;
+  font-size: 2rem;
+  padding: 0px;
+  line-height: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0);
+}
+button.is-neutral:hover {
+  background: rgba(48, 48, 48, 0.145);
+  box-shadow: 0px 0px 2px rgba(18, 18, 18, 0.2875);
+}
+button.is-neutral:focus {
+  background: rgba(18, 18, 18, 0.2875);
+  border: 2px solid rgba(6, 6, 6, 0.525);
+
+}
+button.is-neutral.is-disabled,
+button.is-neutral:disabled {
+  background: rgba(255, 255, 255, 0.525);
+  cursor: not-allowed;
 }
