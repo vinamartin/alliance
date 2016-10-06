@@ -24,12 +24,8 @@ import java.util.UUID;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.binary.Hex;
-import org.junit.Before;
 import org.junit.Test;
 import org.opengis.filter.Filter;
-import org.slf4j.LoggerFactory;
-
-import com.sun.media.jfxmedia.logging.Logger;
 
 import ddf.catalog.filter.proxy.builder.GeotoolsFilterBuilder;
 
@@ -88,14 +84,7 @@ public class TestBqsConverter {
             "NSIL_CARD.identifier like '%' AND (not NSIL_PRODUCT:NSIL_CARD.status = 'OBSOLETE')";
 
     private BqsConverter bqsConverter = new BqsConverter(new GeotoolsFilterBuilder());
-
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TestBqsConverter.class);
-
-    @Before
-    public void setup() {
-        Logger.setLevel(Logger.DEBUG);
-    }
-
+    
     @Test
     public void testBasicBqsUUID() {
         Filter filter = bqsConverter.convertBQSToDDF(BASIC_BQS_UUID_QUERY);
