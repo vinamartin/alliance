@@ -396,9 +396,8 @@ public class ImageAttribute extends NitfAttributeImpl<ImageSegment> {
     public static final ImageAttribute IMAGE_MAGNIFICATION =
             new ImageAttribute("imageMagnification",
                     "IMAG",
-                    segment -> segment.getImageMagnification()
-                            .trim(),
-                    BasicTypes.STRING_TYPE,
+                    ImageSegment::getImageMagnificationAsDouble,
+                    BasicTypes.DOUBLE_TYPE,
                     ATTRIBUTE_NAME_PREFIX);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageAttribute.class);
