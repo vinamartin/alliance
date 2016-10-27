@@ -12,14 +12,12 @@
  *
  **/
  -->
-<project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.codice.alliance</groupId>
         <artifactId>distribution</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.1.1</version>
     </parent>
     <artifactId>docs</artifactId>
     <name>Alliance :: Docs</name>
@@ -258,7 +256,7 @@
                                         <icons>font</icons>
                                         <sectanchors>true</sectanchors>
                                         <sectlinks>true</sectlinks>
-                                        <idprefix/>
+                                        <idprefix />
                                         <idseparator>-</idseparator>
                                         <docinfo1>true</docinfo1>
                                     </attributes>
@@ -276,9 +274,9 @@
                                     <backend>pdf</backend>
                                     <outputDirectory>${project.build.directory}/docs/pdf</outputDirectory>
                                     <attributes>
-                                        <pagenums/>
-                                        <toc/>
-                                        <idprefix/>
+                                        <pagenums />
+                                        <toc />
+                                        <idprefix />
                                         <idseparator>-</idseparator>
                                     </attributes>
                                 </configuration>

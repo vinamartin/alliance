@@ -12,13 +12,11 @@
  *
  **/
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.codice</groupId>
     <artifactId>alliance</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.1</version>
     <packaging>pom</packaging>
     <name>Alliance</name>
     <description>Codice Alliance</description>
@@ -39,10 +37,10 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <ddf.version>2.9.3</ddf.version>
         <ddf.support.version>2.3.6</ddf.support.version>
-        <ddf.scm.connection.url/>
-        <snapshots.repository.url/>
-        <reports.repository.url/>
-        <releases.repository.url/>
+        <ddf.scm.connection.url />
+        <snapshots.repository.url />
+        <reports.repository.url />
+        <releases.repository.url />
         <cxf.version>3.1.7</cxf.version>
         <karaf.version>4.0.7</karaf.version>
         <commons-lang.version>2.6</commons-lang.version>
@@ -104,7 +102,7 @@
         <url>https://github.com/codice/alliance</url>
         <connection>scm:git:https://github.com/codice/alliance.git</connection>
         <developerConnection>scm:git:https://github.com/codice/alliance.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>alliance-0.1.1</tag>
     </scm>
     <dependencyManagement>
         <dependencies>
