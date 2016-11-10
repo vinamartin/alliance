@@ -23,39 +23,39 @@ import ddf.catalog.data.impl.AttributeDescriptorImpl;
 import ddf.catalog.data.impl.BasicTypes;
 
 public enum AcftbAttribute implements NitfAttribute<Tre> {
-    AIRCRAFT_MISSION_ID("aircraftMissionId",
+    AIRCRAFT_MISSION_ID("aircraft-mission-id",
             "AC_MSN_ID",
             tre -> TreUtility.getTreValue(tre, "AC_MSN_ID")),
 
-    AIRCRAFT_TAIL_NUMBER("aircraftTailNumber",
+    AIRCRAFT_TAIL_NUMBER("aircraft-tail-number",
             "AC_TAIL_NO",
             tre -> TreUtility.getTreValue(tre, "AC_TAIL_NO")),
 
-    AIRCRAFT_TAKEOFF("aircraftTakeOff", "AC_TO", tre -> TreUtility.getTreValue(tre, "AC_TO")),
+    AIRCRAFT_TAKEOFF("aircraft-take-off", "AC_TO", tre -> TreUtility.getTreValue(tre, "AC_TO")),
 
-    SENSOR_ID_TYPE("sensorIdType",
+    SENSOR_ID_TYPE("sensor-id-type",
             "SENSOR_ID_TYPE",
             tre -> TreUtility.getTreValue(tre, "SENSOR_ID_TYPE")),
 
-    SENSOR_ID("sensorId", "SENSOR_ID", tre -> TreUtility.getTreValue(tre, "SENSOR_ID")),
+    SENSOR_ID("sensor-id", "SENSOR_ID", tre -> TreUtility.getTreValue(tre, "SENSOR_ID")),
 
-    SCENE_SOURCE("sceneSource",
+    SCENE_SOURCE("scene-source",
             "SCENE_SOURCE",
             tre -> TreUtility.getTreValue(tre, "SCENE_SOURCE")),
 
-    SCENE_NUMBER("sceneNumber", "SCNUM", tre -> TreUtility.getTreValue(tre, "SCNUM")),
+    SCENE_NUMBER("scene-number", "SCNUM", tre -> TreUtility.getTreValue(tre, "SCNUM")),
 
-    PROCESSING_DATE("processingDate", "PDATE", tre -> TreUtility.getTreValue(tre, "PDATE")),
+    PROCESSING_DATE("processing-date", "PDATE", tre -> TreUtility.getTreValue(tre, "PDATE")),
 
-    IMMEDIATE_SCENE_HOST("immediateSceneHost",
+    IMMEDIATE_SCENE_HOST("immediate-scene-host",
             "IMHOSTNO",
             tre -> TreUtility.getTreValue(tre, "IMHOSTNO")),
 
-    IMMEDIATE_SCENE_REQUEST_ID("immediateSceneRequestId",
+    IMMEDIATE_SCENE_REQUEST_ID("immediate-scene-request-id",
             "IMREQID",
             tre -> TreUtility.getTreValue(tre, "IMREQID")),
 
-    MISSION_PLAN_MODE("missionPlanMode", "MPLAN", tre -> TreUtility.getTreValue(tre, "MPLAN"));
+    MISSION_PLAN_MODE("mission-plan-mode", "MPLAN", tre -> TreUtility.getTreValue(tre, "MPLAN"));
 
     private static final String ATTRIBUTE_NAME_PREFIX = "nitf.acftb.";
 

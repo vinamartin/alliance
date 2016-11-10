@@ -25,25 +25,25 @@ import ddf.catalog.data.impl.AttributeDescriptorImpl;
 import ddf.catalog.data.impl.BasicTypes;
 
 enum IndexedMtirpbAttribute implements NitfAttribute<TreGroup> {
-    INDEXED_TARGET_CLASSIFICATION_CATEGORY("targetClassificationCategory",
+    INDEXED_TARGET_CLASSIFICATION_CATEGORY("target-classification-category",
             "TGT_CAT",
             tre -> getClassificationCategory(tre)),
-    INDEXED_TARGET_AMPLITUDE("targetAmplitude",
+    INDEXED_TARGET_AMPLITUDE("target-amplitude",
             "TGT_AMPLITUDE",
             tre -> TreUtility.getTreValue(tre, "TGT_AMPLITUDE")),
-    INDEXED_TARGET_HEADING("targetHeading",
+    INDEXED_TARGET_HEADING("target-heading",
             "TGT_HEADING",
             tre -> TreUtility.getTreValue(tre, "TGT_HEADING")),
-    INDEXED_TARGET_GROUND_SPEED("targetGroundSpeed",
+    INDEXED_TARGET_GROUND_SPEED("target-ground-speed",
             "TGT_SPEED",
             tre -> TreUtility.getTreValue(tre, "TGT_SPEED")),
-    INDEXED_TARGET_RADIAL_VELOCITY("targetRadialVelocity",
+    INDEXED_TARGET_RADIAL_VELOCITY("target-radial-velocity",
             "TGT_VEL_R",
             tre -> TreUtility.getTreValue(tre, "TGT_VEL_R")),
-    INDEXED_TARGET_LOCATION_ACCURACY("targetLocationAccuracy",
+    INDEXED_TARGET_LOCATION_ACCURACY("target-location-accuracy",
             "TGT_LOC_ACCY",
             tre -> TreUtility.getTreValue(tre, "TGT_LOC_ACCY")),
-    INDEXED_TARGET_LOCATION("targetLocation",
+    INDEXED_TARGET_LOCATION("target-location",
             "TGT_LOC",
             tre -> TreUtility.getTreValue(tre, "TGT_LOC"));
 
