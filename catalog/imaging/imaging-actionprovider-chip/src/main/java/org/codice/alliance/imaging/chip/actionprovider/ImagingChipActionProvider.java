@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +25,8 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.codice.ddf.configuration.SystemBaseUrl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +57,8 @@ public class ImagingChipActionProvider implements MultiActionProvider {
     private static final String NITF_IMAGE_METACARD_TYPE = "isr.image";
 
     public static final String ORIGINAL_QUALIFIER = "original";
+
+    private static final String QUALIFIER_KEY = "qualifier";
 
     private GeometryFactory geometryFactory = new GeometryFactory();
 
@@ -125,8 +130,9 @@ public class ImagingChipActionProvider implements MultiActionProvider {
         try {
             URI derivedResourceUri = new URI(uriString);
 
-            // find the #original URI fragment
-            if (ORIGINAL_QUALIFIER.equals(derivedResourceUri.getFragment())) {
+            // find the #original URI fragment for local or =original param for remote
+            if (ORIGINAL_QUALIFIER.equals(derivedResourceUri.getFragment()) ||
+                    ORIGINAL_QUALIFIER.equals(getQualifierForRemoteResource(uriString))) {
                 return true;
             }
         } catch (URISyntaxException use) {
@@ -150,5 +156,15 @@ public class ImagingChipActionProvider implements MultiActionProvider {
         }
 
         return hasValidLocation;
+    }
+
+    private String getQualifierForRemoteResource(String uriString) throws URISyntaxException {
+        return URLEncodedUtils.parse(new URI(uriString), StandardCharsets.UTF_8.name())
+                .stream()
+                .filter(pair -> QUALIFIER_KEY.equals(pair.getName()))
+                .map(NameValuePair::getValue)
+                .filter(value -> ORIGINAL_QUALIFIER.equals(value))
+                .findFirst()
+                .orElse(""); // default
     }
 }
