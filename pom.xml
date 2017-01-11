@@ -90,17 +90,17 @@
         <variable-prefix>${</variable-prefix>
         <image-width>500</image-width>
         <!-- Individual application names -->
-        <ddf-admin>DDF Admin</ddf-admin>
-        <ddf-catalog>DDF Catalog</ddf-catalog>
-        <ddf-geowebcache>DDF GeoWebCache</ddf-geowebcache>
-        <ddf-platform>DDF Platform</ddf-platform>
-        <ddf-security>DDF Security</ddf-security>
-        <ddf-solr>DDF Solr</ddf-solr>
-        <ddf-spatial>DDF Spatial</ddf-spatial>
-        <ddf-ui>DDF Search UI</ddf-ui>
-        <alliance-imaging>Alliance Imaging</alliance-imaging>
-        <alliance-nsili>Alliance NSILI</alliance-nsili>
-        <alliance-video>Alliance Video</alliance-video>
+        <ddf-admin>Admin</ddf-admin>
+        <ddf-catalog>Catalog</ddf-catalog>
+        <ddf-geowebcache>GeoWebCache</ddf-geowebcache>
+        <ddf-platform>Platform</ddf-platform>
+        <ddf-security>Security</ddf-security>
+        <ddf-solr>Solr</ddf-solr>
+        <ddf-spatial>Spatial</ddf-spatial>
+        <ddf-ui>Search UI</ddf-ui>
+        <alliance-imaging>Imaging</alliance-imaging>
+        <alliance-nsili>NSILI</alliance-nsili>
+        <alliance-video>Video</alliance-video>
         <commons-configuration.version>1.10</commons-configuration.version>
         <javax-mail.version>1.4.4</javax-mail.version>
         <powermock.version>1.6.6</powermock.version>

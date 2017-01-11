@@ -33,7 +33,7 @@
     </feature>
 
     <feature name="security-app" install="auto" version="${project.version}"
-             description="The Alliance Security App provides features to enhance security. ::Alliance Security">
+             description="The IC Security App provides features to enhance security.::IC Security">
         <feature prerequisite="true">catalog-app</feature>
     </feature>
 
