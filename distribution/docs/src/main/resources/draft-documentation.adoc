@@ -577,6 +577,8 @@ include::{adoc-include}/_plugins/access-plugin-intro-contents.adoc[]
 include::{adoc-include}/_plugins/access-plugins-contents.adoc[]
 
 include::{adoc-include}/_plugins/operation-plugin-contents.adoc[]
+
+include::{adoc-include-cal}/_plugins/security-audit-plugin-contents.adoc[]
 //developing
 include::{adoc-include}/_plugins/developing-plugins-contents.adoc[]
 

@@ -101,6 +101,7 @@
         <alliance-imaging>Imaging</alliance-imaging>
         <alliance-nsili>NSILI</alliance-nsili>
         <alliance-video>Video</alliance-video>
+        <alliance-security>IC Security</alliance-security>
         <commons-configuration.version>1.10</commons-configuration.version>
         <javax-mail.version>1.4.4</javax-mail.version>
         <powermock.version>1.6.6</powermock.version>
