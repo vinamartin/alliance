@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.codice.alliance.catalog.core.api.impl.types.SecurityAttributes;
 import org.codice.alliance.catalog.core.api.types.Security;
 import org.opensaml.core.xml.schema.XSString;
@@ -113,6 +114,10 @@ public class DefaultSecurityAttributeValuesPlugin implements PreIngestPlugin {
         if (securityMarkings.keySet()
                 .stream()
                 .anyMatch(attributeName -> metacard.getAttribute(attributeName) != null)) {
+            return metacard;
+        }
+
+        if (isRegistryMetacard(metacard)) {
             return metacard;
         }
 
@@ -245,5 +250,25 @@ public class DefaultSecurityAttributeValuesPlugin implements PreIngestPlugin {
             }
         }
         return securityMarkings;
+    }
+
+    private boolean isRegistryMetacard(Metacard metacard) {
+        String registryTag = "registry";
+        String registryRemoteTag = "registry-remote";
+        if (!metacard.getTags()
+                .contains(registryTag) && !metacard.getTags()
+                .contains(registryRemoteTag)) {
+            return false;
+        }
+
+        Attribute registryAttr = metacard.getAttribute("registry.registry-id");
+        if (registryAttr == null || registryAttr.getValue() == null) {
+            return false;
+        }
+
+        String registryId = registryAttr.getValue()
+                .toString();
+
+        return !StringUtils.isEmpty(registryId);
     }
 }
