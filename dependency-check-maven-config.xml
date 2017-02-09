@@ -14,7 +14,7 @@
             CVE-2015-5344 is an issue with Camel version before 2.16.1
             OWASP appears to have confused the internal proxy-camel-servlet
             version with the overall Camel version - marking as false positive.
-        file name: proxy-camel-servlet-2.10.0-SNAPSHOT.jar]]>
+        file name: proxy-camel-servlet-2.11.0-SNAPSHOT.jar]]>
         </notes>
         <cve>CVE-2015-5344</cve>
     </suppress>
