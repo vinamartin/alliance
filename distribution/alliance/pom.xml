@@ -401,7 +401,10 @@ org.codice.alliance.corba_default_port=2809</concat>
         <profile>
             <id>documentation</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>skipDocs</name>
+                    <value>!true</value>
+                </property>
             </activation>
             <build>
                 <plugins>
