@@ -22,80 +22,26 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>imaging-plugin-nitf</artifactId>
+    <groupId>org.codice.alliance.imaging</groupId>
+    <artifactId>imaging-nitf-api</artifactId>
+    <name>Alliance :: Imaging :: Nitf :: API</name>
     <packaging>bundle</packaging>
-    <name>Alliance :: Imaging :: Plugin :: Nitf</name>
 
     <dependencies>
-        <dependency>
-            <groupId>ddf.catalog.core</groupId>
-            <artifactId>catalog-core-api</artifactId>
-            <version>${ddf.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ddf.catalog.core</groupId>
-            <artifactId>catalog-core-api-impl</artifactId>
-            <version>${ddf.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ddf.platform.util</groupId>
-            <artifactId>platform-util</artifactId>
-            <version>${ddf.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codice.imaging.nitf</groupId>
-            <artifactId>codice-imaging-nitf-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codice.imaging.nitf</groupId>
-            <artifactId>codice-imaging-nitf-render</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.codice.imaging.nitf</groupId>
             <artifactId>codice-imaging-nitf-fluent-api</artifactId>
             <version>${nitf-imaging.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-            <version>${thumbnailator.version}</version>
+            <groupId>org.codice.imaging.nitf</groupId>
+            <artifactId>codice-imaging-nitf-core</artifactId>
+            <version>${nitf-imaging.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.jai-imageio</groupId>
-            <artifactId>jai-imageio-core</artifactId>
-            <version>${jai-imageio-core.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.jai-imageio</groupId>
-            <artifactId>jai-imageio-jpeg2000</artifactId>
-            <version>${jpeg2000.version}</version>
-        </dependency>
-
-        <!--Spock dependencies-->
-        <dependency>
-            <groupId>ddf.lib</groupId>
-            <artifactId>spock-shaded</artifactId>
-            <version>${ddf.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
+            <groupId>org.codice.imaging.nitf</groupId>
+            <artifactId>codice-imaging-nitf-render</artifactId>
+            <version>${nitf-imaging.version}</version>
         </dependency>
     </dependencies>
 
@@ -107,17 +53,18 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>
-                            thumbnailator,
-                            catalog-core-api-impl,
-                            platform-util,
-                            jai-imageio-core,
-                            jai-imageio-jpeg2000,
-                            commons-lang3
+                            codice-imaging-nitf-fluent-api,
+                            codice-imaging-nitf-core,
+                            codice-imaging-nitf-render
                         </Embed-Dependency>
-                        <Export-Package />
-                        <Import-Package>!sun.security.action,*</Import-Package>
+                        <Export-Package>
+                            org.codice.imaging.nitf.fluent.*,
+                            org.codice.imaging.nitf.core.*,
+                            org.codice.imaging.nitf.render.*,
+                            org.codice.alliance.imaging.nitf.api.*
+                        </Export-Package>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
             </plugin>
@@ -139,17 +86,17 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.76</minimum>
+                                            <minimum>0.0</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.63</minimum>
+                                            <minimum>0.0</minimum>
                                         </limit>
                                         <limit>
                                             <counter>COMPLEXITY</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.63</minimum>
+                                            <minimum>0.0</minimum>
                                         </limit>
 
                                     </limits>

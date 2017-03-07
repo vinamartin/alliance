@@ -13,26 +13,9 @@
  */
 package org.codice.alliance.transformer.nitf;
 
-import java.io.InputStream;
-import java.util.Optional;
-
-import org.codice.imaging.nitf.core.common.NitfFormatException;
-import org.codice.imaging.nitf.fluent.NitfParserInputFlow;
-import org.codice.imaging.nitf.fluent.NitfSegmentsFlow;
-
 import ddf.catalog.transform.CatalogTransformerException;
 
 public class NitfParserAdapter {
-
-    public NitfSegmentsFlow parseNitf(InputStream inputStream) throws NitfFormatException {
-
-        if (inputStream == null) {
-            throw new IllegalArgumentException("method argument 'inputStream' may not be null.");
-        }
-
-        return new NitfParserInputFlow().inputStream(inputStream)
-                .headerOnly();
-    }
 
     /**
      * @param exception the exception to be wrapped.
@@ -40,15 +23,5 @@ public class NitfParserAdapter {
      */
     public void wrapException(Exception exception) throws CatalogTransformerException {
         throw new CatalogTransformerException(exception);
-    }
-
-    /**
-     *
-     * @param nitfSegmentsFlow - the NitfSegmentsFlow object to end.  This method call will
-     *                           delete any temp files created by this route.
-     */
-    public void endNitfSegmentsFlow(NitfSegmentsFlow nitfSegmentsFlow) {
-        Optional.of(nitfSegmentsFlow)
-                .ifPresent(flow -> flow.end());
     }
 }

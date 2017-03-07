@@ -49,7 +49,6 @@ import java.util.stream.Stream;
 
 import org.codice.alliance.catalog.core.api.types.Isr;
 import org.codice.alliance.transformer.nitf.MetacardFactory;
-import org.codice.alliance.transformer.nitf.NitfParserAdapter;
 import org.codice.alliance.transformer.nitf.TreTestUtility;
 import org.codice.alliance.transformer.nitf.common.AimidbAttribute;
 import org.codice.alliance.transformer.nitf.common.IndexedPiaprdAttribute;
@@ -250,7 +249,8 @@ public class ImageInputTransformerTest {
 
             try (InputStream inputStream = new FileInputStream(nitfFile)) {
                 Metacard metacard = metacardFactory.createMetacard("aimidbTest");
-                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserAdapter().parseNitf(inputStream);
+                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserInputFlow().inputStream(inputStream)
+                        .headerOnly();
                 headerTransformer.transform(nitfSegmentsFlow, metacard);
                 transformer.transform(nitfSegmentsFlow, metacard);
                 assertAttributesMap(metacard, treMap);
@@ -364,7 +364,8 @@ public class ImageInputTransformerTest {
 
             try (InputStream inputStream = new FileInputStream(nitfFile)) {
                 Metacard metacard = metacardFactory.createMetacard("piaprdTest");
-                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserAdapter().parseNitf(inputStream);
+                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserInputFlow().inputStream(inputStream)
+                        .headerOnly();
                 headerTransformer.transform(nitfSegmentsFlow, metacard);
                 transformer.transform(nitfSegmentsFlow, metacard);
                 assertAttributesMap(metacard, treMap);
@@ -409,7 +410,8 @@ public class ImageInputTransformerTest {
 
             try (InputStream inputStream = new FileInputStream(nitfFile)) {
                 Metacard metacard = metacardFactory.createMetacard("csexraTest");
-                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserAdapter().parseNitf(inputStream);
+                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserInputFlow().inputStream(inputStream)
+                        .headerOnly();
                 headerTransformer.transform(nitfSegmentsFlow, metacard);
                 assertThat(metacard.getAttribute(Isr.PLATFORM_ID)
                         .getValue(), is("XY01"));
@@ -503,7 +505,8 @@ public class ImageInputTransformerTest {
 
             try (InputStream inputStream = new FileInputStream(nitfFile)) {
                 Metacard metacard = metacardFactory.createMetacard("csexraTest");
-                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserAdapter().parseNitf(inputStream);
+                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserInputFlow().inputStream(inputStream)
+                        .headerOnly();
                 transformer.transform(nitfSegmentsFlow, metacard);
                 assertThat(metacard.getAttribute(Isr.CLOUD_COVER)
                         .getValue(), is(70));
@@ -547,7 +550,8 @@ public class ImageInputTransformerTest {
 
             try (InputStream inputStream = new FileInputStream(nitfFile)) {
                 Metacard metacard = metacardFactory.createMetacard("piatgbTest");
-                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserAdapter().parseNitf(inputStream);
+                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserInputFlow().inputStream(inputStream)
+                        .headerOnly();
                 transformer.transform(nitfSegmentsFlow, metacard);
                 assertThat(metacard.getAttribute(PiatgbAttribute.TARGET_NAME_ATTRIBUTE.getLongName())
                         .getValue(), is("Canberra Hill"));
@@ -588,7 +592,8 @@ public class ImageInputTransformerTest {
 
             try (InputStream inputStream = new FileInputStream(nitfFile)) {
                 Metacard metacard = metacardFactory.createMetacard("csexraTest");
-                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserAdapter().parseNitf(inputStream);
+                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserInputFlow().inputStream(inputStream)
+                        .headerOnly();
                 transformer.transform(nitfSegmentsFlow, metacard);
                 consumer.accept(metacard);
             }
@@ -625,7 +630,8 @@ public class ImageInputTransformerTest {
 
             try (InputStream inputStream = new FileInputStream(nitfFile)) {
                 Metacard metacard = metacardFactory.createMetacard("differentImageDateTimesTest");
-                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserAdapter().parseNitf(inputStream);
+                NitfSegmentsFlow nitfSegmentsFlow = new NitfParserInputFlow().inputStream(inputStream)
+                        .headerOnly();
 
                 nitfSegmentsFlow = headerTransformer.transform(nitfSegmentsFlow, metacard);
                 metacard = transformer.transform(nitfSegmentsFlow, metacard);

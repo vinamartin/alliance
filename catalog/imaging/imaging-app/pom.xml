@@ -62,6 +62,16 @@
         </dependency>
         <dependency>
             <groupId>org.codice.alliance.imaging</groupId>
+            <artifactId>imaging-nitf-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codice.alliance.imaging</groupId>
+            <artifactId>imaging-nitf-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codice.alliance.imaging</groupId>
             <artifactId>imaging-plugin-nitf</artifactId>
             <version>${project.version}</version>
         </dependency>

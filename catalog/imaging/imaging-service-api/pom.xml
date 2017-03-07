@@ -29,8 +29,23 @@
 
     <dependencies>
         <dependency>
+            <groupId>ddf.catalog.core</groupId>
+            <artifactId>catalog-core-api</artifactId>
+            <version>${ddf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ddf.catalog.core</groupId>
+            <artifactId>catalog-core-api-impl</artifactId>
+            <version>${ddf.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.vividsolutions</groupId>
             <artifactId>jts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codice.imaging.nitf</groupId>
+            <artifactId>codice-imaging-nitf-fluent-api</artifactId>
+            <version>${nitf-imaging.version}</version>
         </dependency>
     </dependencies>
 
