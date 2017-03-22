@@ -68,21 +68,23 @@ public class UdpStreamMonitorTest {
     }
 
     @Test
-    public void testSetByteCountRolloverCondition() {
-        udpStreamMonitor.setByteCountRolloverCondition(UdpStreamMonitor.BYTE_COUNT_MIN);
-        verify(udpStreamProcessor).setByteCountRolloverCondition(UdpStreamMonitor.BYTE_COUNT_MIN);
+    public void testSetMegabyteCountRolloverCondition() {
+        udpStreamMonitor.setMegabyteCountRolloverCondition(Math.toIntExact(UdpStreamMonitor.MEGABYTE_COUNT_MIN));
+        verify(udpStreamProcessor).setMegabyteCountRolloverCondition(Math.toIntExact(
+                UdpStreamMonitor.MEGABYTE_COUNT_MIN));
         assertThat(udpStreamMonitor.getByteCountRolloverCondition(),
-                is(UdpStreamMonitor.BYTE_COUNT_MIN));
+                is(Math.toIntExact(UdpStreamMonitor.MEGABYTE_COUNT_MIN)));
     }
 
     @Test(expected = NullPointerException.class)
     public void testSetByteCountRolloverConditionNullArg() {
-        udpStreamMonitor.setByteCountRolloverCondition(null);
+        udpStreamMonitor.setMegabyteCountRolloverCondition(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSetByteCountRolloverConditionBelowRangeArg() {
-        udpStreamMonitor.setByteCountRolloverCondition(UdpStreamMonitor.BYTE_COUNT_MIN - 10);
+        udpStreamMonitor.setMegabyteCountRolloverCondition(
+                Math.toIntExact(UdpStreamMonitor.MEGABYTE_COUNT_MIN) - 10);
     }
 
     @Test(expected = IllegalArgumentException.class)
