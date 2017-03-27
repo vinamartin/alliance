@@ -212,7 +212,7 @@ public class NitfPreStoragePlugin implements PreCreateStoragePlugin, PreUpdateSt
                 }
 
             }
-        } catch (IOException | ParseException | NitfFormatException | UnsupportedOperationException e) {
+        } catch (IOException | ParseException | NitfFormatException | RuntimeException e) {
             LOGGER.debug(e.getMessage(), e);
         }
     }
@@ -258,7 +258,7 @@ public class NitfPreStoragePlugin implements PreCreateStoragePlugin, PreUpdateSt
 
             if (inputStream != null) {
                 try {
-                    NitfRenderer renderer = new NitfRenderer();
+                    NitfRenderer renderer = getNitfRenderer();
 
                     new NitfParserInputFlow().inputStream(inputStream)
                             .allData()
@@ -470,5 +470,9 @@ public class NitfPreStoragePlugin implements PreCreateStoragePlugin, PreUpdateSt
 
     public void setStoreOriginalImage(boolean storeOriginalImage) {
         this.storeOriginalImage = storeOriginalImage;
+    }
+
+    NitfRenderer getNitfRenderer() {
+        return new NitfRenderer();
     }
 }
