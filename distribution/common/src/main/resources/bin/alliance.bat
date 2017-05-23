@@ -1,4 +1,4 @@
 @echo off
-setlocal^M
+setlocal
 
 call "%~dp0%"karaf.bat
