@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression">
 
+    <!-- ddf kernel -->
+    <suppress>
+        <notes>
+            Karaf 4.1.1 uses pax-web-jsp 6.0.3 which is a dependency of ddf-kernel and contains
+            several CVEs: CVE-2016-8735, CVE-2014-0230, CVE-2013-2185, CVE-2011-3190, CVE-2009-3548.
+            None of these vulnerabilities are exposed through this code, so Apache must mitigate
+            them.
+            <![CDATA[file name: kernel-2.11.0-SNAPSHOT.zip: pax-web-jsp-6.0.3.jar]]>
+        </notes>
+        <sha1>6fe07b3e7c731219ee2d70e04b179f4b34bd3c16</sha1>
+        <cpe>cpe:/a:apache:tomcat</cpe>
+    </suppress>
     <!-- tika -->
     <suppress>
         <notes>
