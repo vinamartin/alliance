@@ -28,6 +28,6 @@ To configure the MPEGTS Input Transformer:
 
 These are the configurable properties:
 
-include::{adoc-include-cal}/_tables/org.codice.alliance.transformer.video.MpegTsInputTransformer-table-contents.adoc[]
+See <<org.codice.alliance.transformer.video.MpegTsInputTransformer,MPEGTS Input Transformer configurations>> for all possible configurations.
 
 '''
