@@ -6,7 +6,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '25'))
     }
     triggers {
-        cron('H H(20-23) * * *')
+        cron('H H(19-21) * * *')
     }
     environment {
         DOCS = 'distribution/docs'
@@ -21,27 +21,32 @@ pipeline {
         stage('Parallel Build') {
             // TODO CAL-296 refactor this stage from scripted syntax to declarative syntax to match the rest of the stages - https://issues.jenkins-ci.org/browse/JENKINS-41334
             steps {
-                parallel(linux: {
-                    node('linux-large') {
-                        checkout scm
-                        timeout(time: 1, unit: 'HOURS') {
-                            withMaven(maven: 'M3', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
-                                sh 'mvn clean install -B -T 1C -pl !$ITESTS'
-                                sh 'mvn install -B -Dmaven.test.redirectTestOutputToFile=true -pl $ITESTS -nsu'
+                parallel(
+                    linux: {
+                        node('linux-large') {
+                            retry(3) {
+                                checkout scm
+                            }
+                            timeout(time: 1, unit: 'HOURS') {
+                                withMaven(maven: 'M3', jdk: 'jdk8-latest', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
+                                    sh 'mvn clean install -B -T 1C -pl !$ITESTS'
+                                    sh 'mvn install -B -Dmaven.test.redirectTestOutputToFile=true -pl $ITESTS -nsu'
+                                }
+                            }
+                        }
+                    }, windows: {
+                        node('proxmox-windows') {
+                            retry(3) {
+                                checkout scm
+                            }
+                            timeout(time: 1, unit: 'HOURS') {
+                                withMaven(maven: 'M3', jdk: 'jdk8-latest', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
+                                    bat 'mvn clean install -B -T 1C -pl !%ITESTS%'
+                                    bat 'mvn install -B -Dmaven.test.redirectTestOutputToFile=true -pl %ITESTS% -nsu'
+                                }
                             }
                         }
                     }
-                }, windows: {
-                    node('proxmox-windows') {
-                        checkout scm
-                        timeout(time: 1, unit: 'HOURS') {
-                            withMaven(maven: 'M3', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
-                                bat 'mvn clean install -B -T 1C -pl !%ITESTS%'
-                                bat 'mvn install -B -Dmaven.test.redirectTestOutputToFile=true -pl %ITESTS% -nsu'
-                            }
-                        }
-                    }
-                }
                 )
             }
         }
@@ -49,15 +54,19 @@ pipeline {
             steps {
                 parallel(owasp: {
                     node('linux-large') {
-                        checkout scm
-                        withMaven(maven: 'M3', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
+                        retry(3) {
+                            checkout scm
+                        }
+                        withMaven(maven: 'M3', jdk: 'jdk8-latest', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
                             sh 'mvn install -q -B -Powasp -DskipTests=true -DskipStatic=true -pl !$DOCS'
                         }
                     }
                 }, sonarqube: {
                     node('linux-large') {
-                        checkout scm
-                        withMaven(maven: 'M3', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
+                        retry(3) {
+                            checkout scm
+                        }
+                        withMaven(maven: 'M3', jdk: 'jdk8-latest', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
                             withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                                 sh 'mvn -q -B -Dfindbugs.skip=true -Dcheckstyle.skip=true org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN  -Dsonar.organization=codice -Dsonar.projectKey=org.codice:alliance -pl !$DOCS,!$ITESTS'
                             }
@@ -65,8 +74,10 @@ pipeline {
                     }
                 }, coverity: {
                     node('linux-medium') {
-                        checkout scm
-                        withMaven(maven: 'M3', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
+                        retry(3) {
+                            checkout scm
+                        }
+                        withMaven(maven: 'M3', jdk: 'jdk8-latest', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
                             withCredentials([string(credentialsId: 'alliance-coverity-token', variable: 'COVERITY_TOKEN')]) {
                                 withEnv(["PATH=${tool 'coverity-linux'}/bin:${env.PATH}"]) {
                                     configFileProvider([configFile(fileId: 'coverity-maven-settings', replaceTokens: true, variable: 'MAVEN_SETTINGS')]) {
@@ -80,7 +91,9 @@ pipeline {
                     }
                 }, nodeJsSecurity: {
                     node('linux-small') {
-                        checkout scm
+                        retry(3) {
+                            checkout scm
+                        }
                         script {
                             def packageFiles = findFiles(glob: '**/package.json')
                             for (int i = 0; i < packageFiles.size(); i++) {
@@ -100,8 +113,10 @@ pipeline {
         stage('Deploy') {
             agent { label 'linux-small' }
             steps {
-                withMaven(maven: 'M3', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
-                    checkout scm
+                withMaven(maven: 'M3', jdk: 'jdk8-latest', globalMavenSettingsConfig: 'default-global-settings', mavenSettingsConfig: 'codice-maven-settings') {
+                    retry(3) {
+                        checkout scm
+                    }
                     sh 'mvn javadoc:aggregate -DskipStatic=true -DskipTests=true'
                     sh 'mvn deploy -T 1C -DskipStatic=true -DskipTests=true -DretryFailedDeploymentCount=10'
                 }
