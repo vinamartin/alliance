@@ -43,7 +43,9 @@
         <snapshots.repository.url/>
         <reports.repository.url/>
         <releases.repository.url/>
-        <cxf.version>3.1.7</cxf.version>
+        <!-- The CXF version of Alliance should match the DDF Platform version
+             Keep this in sync -->
+        <cxf.version>3.1.11</cxf.version>
         <karaf.version>4.1.1</karaf.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-io.version>2.1</commons-io.version>

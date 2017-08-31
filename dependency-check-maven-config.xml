@@ -546,4 +546,12 @@
         </notes>
         <cve>CVE-2008-5518</cve>
     </suppress>
+    <suppress>
+        <notes>
+            This CVE is incorrectly attributing a CXF vulnerability to Camel camel-cxf-2.19.0.jar.
+            The CVE is in CXF versions in this case the camel version is incorrectly being used
+            file name: imaging-transformer-chipping-0.2-SNAPSHOT.jar
+        </notes>
+        <cve>CVE-2016-8739</cve>
+    </suppress>
 </suppressions>
