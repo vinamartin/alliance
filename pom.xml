@@ -51,12 +51,13 @@
         <commons-io.version>2.1</commons-io.version>
         <guava.version>18.0</guava.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <asciidoctor.maven.plugin.version>1.5.3</asciidoctor.maven.plugin.version>
-        <asciidoctorj.version>1.5.4.1</asciidoctorj.version>
-        <asciidoctorj.diagram.version>1.5.0</asciidoctorj.diagram.version>
-        <asciidoctorj.pdf.version>1.5.0-alpha.11</asciidoctorj.pdf.version>
+        <asciidoctor.maven.plugin.version>1.5.6</asciidoctor.maven.plugin.version>
+        <asciidoctorj.version>1.5.6</asciidoctorj.version>
+        <asciidoctorj.diagram.version>1.5.4.1</asciidoctorj.diagram.version>
+        <asciidoctorj.pdf.version>1.5.0-alpha.16</asciidoctorj.pdf.version>
         <asciidoctor.source.highlighter>coderay</asciidoctor.source.highlighter>
-        <jruby.version>1.7.25</jruby.version>
+        <jbake.maven.plugin.version>0.0.9</jbake.maven.plugin.version>
+        <jruby.version>1.7.26</jruby.version>
         <httpcore.version>4.4.5</httpcore.version>
         <httpclient.version>4.5.2</httpclient.version>
         <!-- output directory for reports -->
