@@ -25,6 +25,7 @@
     <artifactId>video-mpegts-stream</artifactId>
     <name>Alliance :: Video :: Stream</name>
     <packaging>bundle</packaging>
+
     <dependencies>
 
         <dependency>
@@ -59,6 +60,13 @@
             <groupId>org.codice.ddf</groupId>
             <artifactId>klv</artifactId>
             <version>${ddf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <!-- This is already being pulled in by another dependency and causes classpath issues in unit tests -->
+                    <groupId>org.opengis</groupId>
+                    <artifactId>geoapi</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
