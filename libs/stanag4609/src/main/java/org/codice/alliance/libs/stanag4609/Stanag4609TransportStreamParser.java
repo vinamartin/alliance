@@ -33,6 +33,7 @@ import org.codice.ddf.libs.klv.data.numerical.KlvShort;
 import org.codice.ddf.libs.klv.data.numerical.KlvUnsignedByte;
 import org.codice.ddf.libs.klv.data.numerical.KlvUnsignedShort;
 import org.codice.ddf.libs.klv.data.set.KlvLocalSet;
+import org.codice.ddf.libs.klv.data.text.KlvEncodingDetectedString;
 import org.codice.ddf.libs.klv.data.text.KlvString;
 import org.codice.ddf.libs.mpeg.transport.MpegTransportStreamMetadataExtractor;
 import org.slf4j.Logger;
@@ -385,7 +386,8 @@ public class Stanag4609TransportStreamParser {
 
     securityLocalSetContext.addDataElement(
         new KlvUnsignedByte(new byte[] {12}, OBJECT_COUNTRY_CODING_METHOD));
-    securityLocalSetContext.addDataElement(new KlvString(new byte[] {13}, OBJECT_COUNTRY_CODES));
+    securityLocalSetContext.addDataElement(
+        new KlvEncodingDetectedString(new byte[] {13}, OBJECT_COUNTRY_CODES));
 
     localSetContext.addDataElement(
         new KlvLocalSet(new byte[] {48}, SECURITY_LOCAL_METADATA_SET, securityLocalSetContext));
