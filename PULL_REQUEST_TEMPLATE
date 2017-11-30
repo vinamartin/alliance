@@ -5,8 +5,9 @@
 (please choose ONLY two committers from below, delete the rest)
 
 @andrewkfiedler
-@beyelerb
 @bdeining
+@beyelerb
+@brendan-hofmann
 @clockard
 @coyotesqrl
 @figliold
@@ -18,9 +19,10 @@
 @millerw8
 @mrmateo
 @pklinef
+@ricklarsen - Documentation
+@rzwiefel
 @shaundmorris
 @stustison
-@ricklarsen - Documentation
 #### How should this be tested?
 #### Any background context you want to provide?
 #### What are the relevant tickets?
