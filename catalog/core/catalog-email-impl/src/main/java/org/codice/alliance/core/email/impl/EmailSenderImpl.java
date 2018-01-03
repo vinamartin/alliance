@@ -148,7 +148,7 @@ public class EmailSenderImpl implements EmailSender {
     } catch (AddressException e) {
       throw new IOException("invalid email address: email=" + toEmail, e);
     } catch (MessagingException e) {
-      throw new IOException("message error occured on send", e);
+      throw new IOException("message error occurred on send", e);
     } finally {
       tempFiles.forEach(
           file -> {
