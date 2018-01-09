@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.codice.alliance.nsili</groupId>
         <artifactId>nsili</artifactId>
-        <version>0.3.4</version>
+        <version>0.3.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>nsili-app</artifactId>
