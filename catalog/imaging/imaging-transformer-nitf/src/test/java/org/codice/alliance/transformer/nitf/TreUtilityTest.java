@@ -55,8 +55,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TreTestUtility {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TreTestUtility.class);
+public class TreUtilityTest {
+  private static final Logger LOGGER = LoggerFactory.getLogger(TreUtilityTest.class);
 
   @Test
   public void testConvertToFloat() throws NitfFormatException, IOException {
