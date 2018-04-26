@@ -51,4 +51,19 @@
         <cve>CVE-2011-2730</cve>
     </suppress>
 
+    <suppress>
+        <notes>
+            These CVEs stem from kernel-2.12.0-SNAPSHOT.zip: pax-web-jsp-6.0.6.jar and its use in
+            Apache Tomcat. Because the system is not utilizing this library in a way that exposes
+            the vulnerabilities, these CVEs do not pose a risk.
+        </notes>
+        <cve>CVE-2009-3548</cve>
+        <cve>CVE-2011-3190</cve>
+        <cve>CVE-2013-2185</cve>
+        <cve>CVE-2014-0230</cve>
+        <cve>CVE-2016-5425</cve>
+        <cve>CVE-2016-6325</cve>
+        <cve>CVE-2016-8735</cve>
+    </suppress>
+
 </suppressions>
