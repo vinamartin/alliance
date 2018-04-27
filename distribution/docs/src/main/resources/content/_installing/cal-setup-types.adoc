@@ -1,0 +1,24 @@
+:title: Startup Types
+:type: installing
+:status: published
+:summary: Installation profiles available.
+:project: ${cal-branding}
+:order: 04
+
+.[[_setup_types]]Setup Types
+****
+${branding} is pre-configured with several installation profiles.
+
+* Standard Installation: This will install DDF with Alliance applications:
+** <<_admin_application_reference,${ddf-admin}>>
+** <<_catalog_application_reference,${ddf-catalog}>>
+** <<_platform_application_reference,${ddf-platform}>>
+** <<_security_application_reference,${ddf-security}>>
+** <<_solr_catalog_provider,${ddf-solr}>>
+** <<_spatial_application_reference,${ddf-spatial}>>
+** <<_configuring_intrigue,${catalog-ui}>>
+** <<_imaging_application_reference,${alliance-imaging}>>
+** <<_security_services,${alliance-security}>>
+
+* Experimental: This will install experimental applications along with the standard Alliance applications.
+****

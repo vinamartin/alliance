@@ -97,7 +97,7 @@
         <variable-prefix>${</variable-prefix>
         <image-width>500</image-width>
         <!-- Individual application names -->
-        <catalog-ui>Catalog UI</catalog-ui>
+        <catalog-ui>Intrigue</catalog-ui>
         <ddf-admin>Admin</ddf-admin>
         <ddf-catalog>Catalog</ddf-catalog>
         <ddf-geowebcache>GeoWebCache</ddf-geowebcache>
